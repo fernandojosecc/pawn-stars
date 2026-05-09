@@ -9,11 +9,15 @@
     "dev": "tsc --watch",
     "clean": "rm -rf dist"
   },
-  "keywords": ["typescript", "types", "chess"],
+  "keywords": [
+    "typescript",
+    "types",
+    "chess"
+  ],
   "author": "",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.9.3"
   }
 }
