@@ -1,0 +1,553 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users table for authentication
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  firstName     String?
+  lastName      String?
+  avatar        String?
+  role          Role     @default(PLAYER)
+  isActive      Boolean  @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  staff         Staff[]
+  shortlists    Shortlist[]
+  player        Player?
+  auditLogs     AuditLog[]
+  notifications Notification[]
+  reviews       Application[] @relation("ApplicationReviewer")
+  blogPosts     BlogPost[]
+  newsPosts     NewsPost[]
+
+  @@map("users")
+}
+
+// Roles for RBAC
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  permissions Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("roles")
+}
+
+// Teams organization
+model Team {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  shortName   String?
+  logo        String?
+  description String?
+  foundedYear Int?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  players     Player[]
+  staff       Staff[]
+  matchesHome Match[]  @relation("MatchHomeTeam")
+  matchesAway Match[]  @relation("MatchAwayTeam")
+  standings   Standing[]
+  sponsors    Sponsor[]
+
+  @@map("teams")
+}
+
+// Seasons for tournaments
+model Season {
+  id         String    @id @default(cuid())
+  name       String
+  startDate  DateTime
+  endDate    DateTime?
+  isActive   Boolean   @default(true)
+  isArchived Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  tournaments Tournament[]
+  standings   Standing[]
+
+  @@map("seasons")
+}
+
+// Tournaments
+model Tournament {
+  id          String           @id @default(cuid())
+  slug        String           @unique
+  name        String
+  description String?
+  format      TournamentFormat
+  status      TournamentStatus @default(UPCOMING)
+  startDate   DateTime
+  endDate     DateTime?
+  location    String?
+  seasonId    String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // Relations
+  season      Season           @relation(fields: [seasonId], references: [id])
+  rounds      Round[]
+  matches     Match[]
+  pairings    Pairing[]
+  standings   Standing[]
+  mediaAssets MediaAsset[]
+
+  @@map("tournaments")
+}
+
+// Tournament rounds
+model Round {
+  id          String      @id @default(cuid())
+  number      Int
+  tournamentId String
+  status      RoundStatus @default(PENDING)
+  completedAt DateTime?
+  createdAt   DateTime    @default(now())
+
+  // Relations
+  tournament  Tournament  @relation(fields: [tournamentId], references: [id])
+  pairings    Pairing[]
+
+  @@unique([tournamentId, number])
+  @@map("rounds")
+}
+
+// Match pairings
+model Pairing {
+  id       String     @id @default(cuid())
+  roundId  String
+  whiteId  String
+  blackId  String
+  result   GameResult?
+  board    Int?
+  createdAt DateTime   @default(now())
+
+  // Relations
+  round    Round      @relation(fields: [roundId], references: [id])
+  white    Player     @relation("PlayerWhite")
+  black    Player     @relation("PlayerBlack")
+
+  @@map("pairings")
+}
+
+// Matches between teams
+model Match {
+  id            String       @id @default(cuid())
+  date          DateTime
+  venue         String?
+  status        MatchStatus  @default(UPCOMING)
+  homeTeamId    String
+  awayTeamId    String
+  seasonId      String?
+  tournamentId  String?
+  homeScore     Float?
+  awayScore     Float?
+  mvpPlayerId   String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // Relations
+  homeTeam      Team         @relation("MatchHomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam      Team         @relation("MatchAwayTeam", fields: [awayTeamId], references: [id])
+  season        Season?      @relation(fields: [seasonId], references: [id])
+  tournament    Tournament?  @relation(fields: [tournamentId], references: [id])
+  mvpPlayer     Player?      @relation("MatchMVP")
+  mediaAssets   MediaAsset[]
+
+  @@map("matches")
+}
+
+// Players - the main entity
+model Player {
+  id            String      @id @default(cuid())
+  slug          String      @unique
+  firstName     String
+  lastName      String
+  nationality   String
+  dateOfBirth   DateTime?
+  bio           String?
+  photoUrl      String?
+  title         PlayerTitle?
+  lichessHandle String?
+  fideId        String?
+  active        Boolean     @default(true)
+  teamId        String?
+  userId        String?     @unique
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // Relations
+  team          Team?       @relation(fields: [teamId], references: [id])
+  user          User?       @relation(fields: [userId], references: [id])
+  ratings       Rating[]
+  statsSnapshots StatsSnapshot[]
+  pairingsWhite Pairing[]   @relation("PlayerWhite")
+  pairingsBlack Pairing[]   @relation("PlayerBlack")
+  matchesMVP    Match[]     @relation("MatchMVP")
+  mediaAssets   MediaAsset[]
+  shortlistPlayers ShortlistPlayer[]
+
+  @@map("players")
+}
+
+// Staff members
+model Staff {
+  id             String    @id @default(cuid())
+  slug           String    @unique
+  firstName      String
+  lastName       String
+  role           StaffRole
+  bio            String?
+  photoUrl       String?
+  email          String?
+  phone          String?
+  teamId         String?
+  specialization String[]
+  userId         String    @unique
+  joinedAt       DateTime
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relations
+  team           Team?     @relation(fields: [teamId], references: [id])
+  user           User      @relation(fields: [userId], references: [id])
+
+  @@map("staff")
+}
+
+// Tournament standings
+model Standing {
+  id          String   @id @default(cuid())
+  tournamentId String
+  seasonId    String
+  teamId      String
+  rank        Int
+  score       Float
+  played      Int      @default(0)
+  won         Int      @default(0)
+  drawn       Int      @default(0)
+  lost        Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  tournament  Tournament @relation(fields: [tournamentId], references: [id])
+  season      Season     @relation(fields: [seasonId], references: [id])
+  team        Team       @relation(fields: [teamId], references: [id])
+
+  @@unique([tournamentId, teamId])
+  @@map("standings")
+}
+
+// Player ratings
+model Rating {
+  id        String   @id @default(cuid())
+  playerId  String
+  rating    Int
+  source    String   // "FIDE", "Lichess", etc.
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  // Relations
+  player    Player   @relation(fields: [playerId], references: [id])
+
+  @@unique([playerId, source, date])
+  @@map("ratings")
+}
+
+// Stats snapshots
+model StatsSnapshot {
+  id          String   @id @default(cuid())
+  playerId    String
+  tournamentId String?
+  capturedAt  DateTime
+  data        Json     // Flexible stats data
+  createdAt   DateTime @default(now())
+
+  // Relations
+  player      Player   @relation(fields: [playerId], references: [id])
+  tournament  Tournament? @relation(fields: [tournamentId], references: [id])
+
+  @@map("stats_snapshots")
+}
+
+// News posts
+model NewsPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  summary     String?
+  content     String?
+  coverUrl    String?
+  tags        String[]
+  publishedAt DateTime?
+  authorId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  author      User?    @relation(fields: [authorId], references: [id])
+
+  @@map("news_posts")
+}
+
+// Blog posts
+model BlogPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  summary     String?
+  content     String?
+  coverUrl    String?
+  tags        String[]
+  publishedAt DateTime?
+  authorId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  author      User?    @relation(fields: [authorId], references: [id])
+
+  @@map("blog_posts")
+}
+
+// Media assets
+model MediaAsset {
+  id          String   @id @default(cuid())
+  filename    String
+  originalName String
+  mimeType    String
+  size        Int
+  url         String
+  s3Key       String?
+  alt         String?
+  caption     String?
+  tournamentId String?
+  matchId     String?
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  tournament  Tournament? @relation(fields: [tournamentId], references: [id])
+  match       Match?      @relation(fields: [matchId], references: [id])
+
+  @@map("media_assets")
+}
+
+// Sponsors
+model Sponsor {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  logo        String?
+  website     String?
+  tier        SponsorTier @default(BRONZE)
+  description String?
+  isActive    Boolean   @default(true)
+  teamId      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  team        Team?     @relation(fields: [teamId], references: [id])
+
+  @@map("sponsors")
+}
+
+// Applications for trials
+model Application {
+  id          String          @id @default(cuid())
+  firstName   String
+  lastName    String
+  email       String
+  phone       String?
+  birthDate   DateTime?
+  fideId      String?
+  lichessUsername String?
+  rating      Int?
+  title       PlayerTitle?
+  bio         String?
+  status      ApplicationStatus @default(PENDING)
+  notes       String?
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  // Relations
+  reviewer    User?           @relation("ApplicationReviewer", fields: [reviewedBy], references: [id])
+
+  @@map("applications")
+}
+
+// Notifications
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  message   String
+  data      Json?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  // Relations
+  user      User             @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+// Audit logs
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entity     String
+  entityId   String?
+  diff       Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  // Relations
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+// Shortlists for scouting
+model Shortlist {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdBy   String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  creator     User     @relation(fields: [createdBy], references: [id])
+  players     ShortlistPlayer[]
+
+  @@map("shortlists")
+}
+
+// Players in shortlists
+model ShortlistPlayer {
+  id         String   @id @default(cuid())
+  shortlistId String
+  playerId   String
+  notes      String?
+  addedAt    DateTime @default(now())
+
+  // Relations
+  shortlist   Shortlist @relation(fields: [shortlistId], references: [id])
+  player      Player   @relation(fields: [playerId], references: [id])
+
+  @@unique([shortlistId, playerId])
+  @@map("shortlist_players")
+}
+
+// Enums
+enum Role {
+  ADMIN
+  CONTENT_MANAGER
+  COACH
+  ANALYST
+  PLAYER
+}
+
+enum PlayerTitle {
+  GM
+  IM
+  FM
+  CM
+  WGM
+  WIM
+  WFM
+  WCM
+}
+
+enum TournamentFormat {
+  Swiss
+  RoundRobin
+  Knockout
+  League
+}
+
+enum TournamentStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum RoundStatus {
+  PENDING
+  ONGOING
+  COMPLETED
+}
+
+enum MatchStatus {
+  UPCOMING
+  LIVE
+  COMPLETED
+  POSTPONED
+  CANCELLED
+}
+
+enum GameResult {
+  WHITE_WINS
+  BLACK_WINS
+  DRAW
+  UNFINISHED
+}
+
+enum StaffRole {
+  HEAD_COACH
+  ASSISTANT_COACH
+  MANAGER
+  DIRECTOR
+  ANALYST
+  TRAINER
+  PSYCHOLOGIST
+  NUTRITIONIST
+  ADMIN
+}
+
+enum SponsorTier {
+  PLATINUM
+  GOLD
+  SILVER
+  BRONZE
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  WAITLIST
+}
