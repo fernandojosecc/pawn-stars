@@ -1,9 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { PlayerCard, PlayerFilter, PlayerTitle } from '@pawn-stars/shared-types';
 import { PlayerQueryDto } from './dto/player.dto';
+import { MeilisearchService } from '../search/meilisearch.service';
+
+interface PlayerCard {
+  id: string;
+  slug: string;
+  firstName: string;
+  lastName: string;
+  nationality: string;
+  photoUrl?: string;
+  title?: string;
+  currentRating?: number;
+  active: boolean;
+  lichessHandle?: string;
+}
+
+interface PlayerFilter {
+  title?: string;
+  nationality?: string;
+  active?: boolean;
+  minRating?: number;
+  maxRating?: number;
+}
+
+interface PlayerDocument {
+  id: string;
+  slug: string;
+  firstName: string;
+  lastName: string;
+  nationality: string;
+  photoUrl?: string;
+  title?: string;
+  currentRating?: number;
+  active: boolean;
+  lichessHandle?: string;
+}
+
+type PlayerTitle = 'GM' | 'IM' | 'FM' | 'CM' | 'WGM' | 'WIM' | 'WFM' | 'WCM';
 
 @Injectable()
 export class PlayersService {
+  constructor(private readonly meilisearchService: MeilisearchService) {}
   // Mock data for development - this would come from database in production
   private readonly mockPlayers: PlayerCard[] = [
     {
@@ -269,7 +306,7 @@ export class PlayersService {
   async getTitles(): Promise<PlayerTitle[]> {
     const titles = [...new Set(this.mockPlayers
       .filter(player => player.title)
-      .map(player => player.title!))];
+      .map(player => player.title!))] as PlayerTitle[];
     return titles;
   }
 
@@ -305,5 +342,70 @@ export class PlayersService {
       titleDistribution,
       nationalityDistribution
     };
+  }
+
+  // Meilisearch integration methods
+  async indexPlayer(player: PlayerCard): Promise<void> {
+    const playerDocument: PlayerDocument = {
+      id: player.id,
+      slug: player.slug,
+      firstName: player.firstName,
+      lastName: player.lastName,
+      nationality: player.nationality,
+      photoUrl: player.photoUrl,
+      title: player.title,
+      currentRating: player.currentRating,
+      active: player.active,
+      lichessHandle: player.lichessHandle,
+    };
+    
+    await this.meilisearchService.indexPlayer(playerDocument);
+  }
+
+  async indexAllPlayers(): Promise<void> {
+    const playerDocuments: PlayerDocument[] = this.mockPlayers.map(player => ({
+      id: player.id,
+      slug: player.slug,
+      firstName: player.firstName,
+      lastName: player.lastName,
+      nationality: player.nationality,
+      photoUrl: player.photoUrl,
+      title: player.title,
+      currentRating: player.currentRating,
+      active: player.active,
+      lichessHandle: player.lichessHandle,
+    }));
+
+    await this.meilisearchService.indexPlayers(playerDocuments);
+  }
+
+  async updatePlayerIndex(player: PlayerCard): Promise<void> {
+    const playerDocument: PlayerDocument = {
+      id: player.id,
+      slug: player.slug,
+      firstName: player.firstName,
+      lastName: player.lastName,
+      nationality: player.nationality,
+      photoUrl: player.photoUrl,
+      title: player.title,
+      currentRating: player.currentRating,
+      active: player.active,
+      lichessHandle: player.lichessHandle,
+    };
+    
+    await this.meilisearchService.updatePlayer(playerDocument);
+  }
+
+  async removePlayerIndex(playerId: string): Promise<void> {
+    await this.meilisearchService.deletePlayer(playerId);
+  }
+
+  async searchPlayers(query: string, options?: {
+    limit?: number;
+    offset?: number;
+    filter?: string;
+    sort?: string;
+  }) {
+    return this.meilisearchService.searchPlayers(query, options);
   }
 }
