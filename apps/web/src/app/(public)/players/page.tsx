@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useState, useEffect } from "react"
 import { PlayerCardComponent } from "@/components/players/PlayerCard"
 import { FilterBar } from "@/components/players/FilterBar"
@@ -8,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Heading } from "@/components/typography/Heading"
 import { Body } from "@/components/typography/Body"
 import { PlayerCard, PlayerFilter, PlayerTitle } from "@pawn-stars/shared-types"
+import { Metadata } from "next"
 
 // Mock data for development - this would come from API in production
 const mockPlayers: PlayerCard[] = [
