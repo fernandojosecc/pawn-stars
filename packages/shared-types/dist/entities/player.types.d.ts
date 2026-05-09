@@ -10,6 +10,7 @@ export interface Player {
     title?: PlayerTitle;
     lichessHandle?: string;
     fideId?: string;
+    currentRating?: number;
     active: boolean;
     teamId?: string;
     createdAt: Date;
