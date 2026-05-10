@@ -25,13 +25,13 @@ export const MatchBar: React.FC<MatchBarProps> = ({
         id: "team1",
         name: "Pawn Stars A",
         shortName: "PSA",
-        logo: "/teams/psa.png"
+        logoUrl:"/teams/psa.png"
       },
       awayTeam: {
         id: "team2", 
         name: "Knight Raiders",
         shortName: "KR",
-        logo: "/teams/kr.png"
+        logoUrl:"/teams/kr.png"
       }
     },
     {
@@ -43,13 +43,13 @@ export const MatchBar: React.FC<MatchBarProps> = ({
         id: "team3",
         name: "Pawn Stars B",
         shortName: "PSB", 
-        logo: "/teams/psb.png"
+        logoUrl:"/teams/psb.png"
       },
       awayTeam: {
         id: "team4",
         name: "Bishop Brigade",
         shortName: "BB",
-        logo: "/teams/bb.png"
+        logoUrl:"/teams/bb.png"
       },
       homeScore: 2.5,
       awayScore: 1.5
@@ -63,13 +63,13 @@ export const MatchBar: React.FC<MatchBarProps> = ({
         id: "team5",
         name: "Pawn Stars C",
         shortName: "PSC",
-        logo: "/teams/psc.png"
+        logoUrl:"/teams/psc.png"
       },
       awayTeam: {
         id: "team6",
         name: "Rook Rebels",
         shortName: "RR",
-        logo: "/teams/rr.png"
+        logoUrl:"/teams/rr.png"
       }
     }
   ]

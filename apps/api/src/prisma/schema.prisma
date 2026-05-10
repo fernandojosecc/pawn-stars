@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Match {
+  id          String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Match metadata
+  title        String
+  description  String?
+  venue         String?
+  scheduledFor DateTime @db.Timestamptz(6)
+  status       MatchStatus @default(UPCOMING)
+  
+  // Relations
+  homeTeam     Team     @relation(fields: [homeTeamId], references: [id])
+  awayTeam     Team     @relation(fields: [awayTeamId], references: [id])
+  
+  // Match results and lineup
+  lineups       MatchLineup[]
+  rounds        MatchRound[]
+  mvp           Player?    @relation(fields: [mvpId], references: [id])
+}
+
+model MatchLineup {
+  id       String   @id @default(cuid())
+  matchId String @map("match_id")
+  
+  // Team lineup
+  homeTeamId String @map("home_team_id")
+  awayTeamId String @map("away_team_id")
+  
+  // Board assignments
+  boardNumber     Int
+  playerId        String @map("player_id")
+  boardPosition   BoardPosition @default(BOARD_1)
+  
+  // Relations
+  match     Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  player    Player @relation(fields: [playerId], references: [id])
+}
+
+model MatchRound {
+  id       String   @id @default(cuid())
+  matchId  String @map("match_id")
+  roundNumber Int
+  
+  // Relations
+  match     Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  results    MatchResult[]
+}
+
+model MatchResult {
+  id           String   @id @default(cuid())
+  matchRoundId  String @map("match_round_id")
+  playerId      String @map("player_id")
+  
+  // Result details
+  result        MatchResultType
+  score         String?
+  performance   Float?
+  
+  // Relations
+  matchRound MatchRound @relation(fields: [matchRoundId], references: [id], onDelete: Cascade)
+  player     Player @relation(fields: [playerId], references: [id])
+}
+
+model Team {
+  id          String   @id @default(cuid())
+  name        String
+  shortName   String
+  logoUrl     String?
+  foundedAt    DateTime @db.Timestamptz(6)
+  
+  // Relations
+  homeMatches Match[] @relation("TeamHomeMatches")
+  awayMatches Match[] @relation("TeamAwayMatches")
+  homeLineups MatchLineup[] @relation("TeamHomeLineups")
+  awayLineups MatchLineup[] @relation("TeamAwayLineups")
+  lineups     MatchLineup[] @relation("TeamLineups")
+}
+
+model Player {
+  id          String   @id @default(cuid())
+  name        String
+  email       String   @unique
+  photoUrl    String?
+  nationality  String
+  rating       Float
+  title        PlayerTitle?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relations
+  homeResults   MatchResult[]
+  awayResults   MatchResult[]
+  lineups       MatchLineup[]
+  mvpMatches    Match[]
+}
+
+model MVP {
+  id       String   @id @default(cuid())
+  matchId  String @map("match_id")
+  playerId String @map("player_id")
+  
+  // Relations
+  match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [id])
+}
+
+enum MatchStatus {
+  UPCOMING
+  LIVE
+  FINISHED
+  CANCELLED
+}
+
+enum MatchResultType {
+  WIN
+  LOSS
+  DRAW
+  FORFEIT
+}
+
+enum BoardPosition {
+  BOARD_1
+  BOARD_2
+  BOARD_3
+  BOARD_4
+  BOARD_5
+  BOARD_6
+  BOARD_7
+  BOARD_8
+  RESERVE
+}

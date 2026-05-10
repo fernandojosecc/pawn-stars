@@ -19,7 +19,8 @@ model User {
   firstName     String?
   lastName      String?
   avatar        String?
-  role          Role     @default(PLAYER)
+  roleId        String
+  role          Role     @relation(fields: [roleId], references: [id])
   isActive      Boolean  @default(true)
   lastLoginAt   DateTime?
   createdAt     DateTime @default(now())
@@ -46,6 +47,9 @@ model Role {
   permissions Json?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // Relations
+  users User[]
 
   @@map("roles")
 }
@@ -87,6 +91,7 @@ model Season {
   // Relations
   tournaments Tournament[]
   standings   Standing[]
+  matches     Match[]
 
   @@map("seasons")
 }
@@ -108,11 +113,11 @@ model Tournament {
 
   // Relations
   season      Season           @relation(fields: [seasonId], references: [id])
-  rounds      Round[]
-  matches     Match[]
-  pairings    Pairing[]
-  standings   Standing[]
-  mediaAssets MediaAsset[]
+  rounds         Round[]
+  matches        Match[]
+  standings      Standing[]
+  statsSnapshots StatsSnapshot[]
+  mediaAssets    MediaAsset[]
 
   @@map("tournaments")
 }
@@ -146,8 +151,8 @@ model Pairing {
 
   // Relations
   round    Round      @relation(fields: [roundId], references: [id])
-  white    Player     @relation("PlayerWhite")
-  black    Player     @relation("PlayerBlack")
+  white    Player     @relation("PlayerWhite", fields: [whiteId], references: [id])
+  black    Player     @relation("PlayerBlack", fields: [blackId], references: [id])
 
   @@map("pairings")
 }
@@ -173,7 +178,7 @@ model Match {
   awayTeam      Team         @relation("MatchAwayTeam", fields: [awayTeamId], references: [id])
   season        Season?      @relation(fields: [seasonId], references: [id])
   tournament    Tournament?  @relation(fields: [tournamentId], references: [id])
-  mvpPlayer     Player?      @relation("MatchMVP")
+  mvpPlayer     Player?      @relation("MatchMVP", fields: [mvpPlayerId], references: [id])
   mediaAssets   MediaAsset[]
 
   @@map("matches")
@@ -205,8 +210,7 @@ model Player {
   statsSnapshots StatsSnapshot[]
   pairingsWhite Pairing[]   @relation("PlayerWhite")
   pairingsBlack Pairing[]   @relation("PlayerBlack")
-  matchesMVP    Match[]     @relation("MatchMVP")
-  mediaAssets   MediaAsset[]
+  matchesMVP       Match[]     @relation("MatchMVP")
   shortlistPlayers ShortlistPlayer[]
 
   @@map("players")
@@ -472,7 +476,7 @@ model ShortlistPlayer {
 }
 
 // Enums
-enum Role {
+enum UserRole {
   ADMIN
   CONTENT_MANAGER
   COACH
