@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState, useEffect } from "react"
 import { PlayerCardComponent } from "@/components/players/PlayerCard"
 import { FilterBar } from "@/components/players/FilterBar"

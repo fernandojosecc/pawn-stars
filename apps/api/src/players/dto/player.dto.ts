@@ -1,15 +1,17 @@
-import { IsString, IsNumber, IsOptional, IsBoolean, IsEnum, Min, Max } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsEnum, Min, Max, IsDate, IsInt } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { PlayerTitle } from '@pawn-stars/shared-types';
+
+// Define PlayerTitle locally to avoid import issues
+export type PlayerTitle = 'GM' | 'IM' | 'FM' | 'CM' | 'WGM' | 'WIM' | 'WFM' | 'WCM' | null;
 
 export class CreatePlayerDto {
   @ApiProperty()
   @IsString()
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty()
   @IsString()
-  lastName: string;
+  lastName!: string;
 
   @ApiPropertyOptional()
   @IsString()
@@ -31,7 +33,6 @@ export class CreatePlayerDto {
   photoUrl?: string;
 
   @ApiPropertyOptional()
-  @IsEnum(PlayerTitle)
   @IsOptional()
   title?: PlayerTitle;
 
@@ -44,10 +45,6 @@ export class CreatePlayerDto {
   @IsString()
   @IsOptional()
   fideId?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  teamId?: string;
 }
 
 export class UpdatePlayerDto {
@@ -81,7 +78,6 @@ export class UpdatePlayerDto {
   photoUrl?: string;
 
   @ApiPropertyOptional()
-  @IsEnum(PlayerTitle)
   @IsOptional()
   title?: PlayerTitle;
 
@@ -96,7 +92,7 @@ export class UpdatePlayerDto {
   fideId?: string;
 
   @ApiPropertyOptional()
-  @IsNumber()
+  @IsInt()
   @IsOptional()
   currentRating?: number;
 
@@ -110,9 +106,9 @@ export class UpdatePlayerDto {
   teamId?: string;
 }
 
+
 export class PlayerQueryDto {
   @ApiPropertyOptional()
-  @IsEnum(PlayerTitle)
   @IsOptional()
   title?: PlayerTitle;
 

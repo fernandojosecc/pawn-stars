@@ -17,7 +17,7 @@ interface PlayerDocument {
 
 @Injectable()
 export class MeilisearchService implements OnModuleInit, OnModuleDestroy {
-  private client: Meilisearch;
+  private client!: Meilisearch;
   private readonly playersIndex = 'players';
 
   constructor(private configService: ConfigService) {}

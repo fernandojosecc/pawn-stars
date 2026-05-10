@@ -10,12 +10,12 @@ export class CreateContactDto {
   @ApiProperty({ description: 'Contact email address' })
   @IsEmail()
   @IsString()
-  email: string;
+  email!: string;
 
   @ApiProperty({ description: 'Contact subject category' })
   @IsEnum(['GENERAL', 'PRESS', 'SPONSORSHIP', 'TRIALS'])
   @IsString()
-  subject: string;
+  subject!: string;
 
   @ApiProperty({ description: 'Contact message' })
   @IsString()

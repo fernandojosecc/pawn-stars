@@ -12,44 +12,39 @@ export enum NewsCategory {
 export class CreateNewsDto {
   @ApiProperty({ description: 'News title' })
   @IsString()
-  title: string;
+  title!: string;
 
-  @ApiProperty({ description: 'News content/excerpt' })
+  @ApiProperty({ description: 'News excerpt' })
   @IsString()
-  excerpt: string;
+  excerpt!: string;
 
-  @ApiProperty({ description: 'Full news content' })
+  @ApiProperty({ description: 'News content' })
   @IsString()
-  content: string;
+  content!: string;
 
   @ApiProperty({ description: 'News category' })
-  @IsEnum(NewsCategory)
-  category: NewsCategory;
-
-  @ApiProperty({ description: 'Author name' })
+  @IsEnum(['ANNOUNCEMENTS', 'MATCH_REPORTS', 'TRANSFERS', 'INTERVIEWS', 'EDITORIAL'])
   @IsString()
-  author: string;
+  category!: NewsCategory;
 
-  @ApiPropertyOptional({ description: 'Cover image URL' })
+  @ApiProperty({ description: 'News author' })
+  @IsString()
+  author!: string;
+
+  @ApiProperty({ description: 'News cover image URL' })
+  @IsString()
   @IsOptional()
-  @IsString()
   coverImage?: string;
 
-  @ApiPropertyOptional({ description: 'Estimated read time in minutes' })
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  readTime?: number;
-
-  @ApiPropertyOptional({ description: 'Is featured article' })
-  @IsOptional()
+  @ApiProperty({ description: 'Whether news is featured' })
   @IsBoolean()
+  @IsOptional()
   featured?: boolean;
 
-  @ApiPropertyOptional({ description: 'Tags for the article' })
+  @ApiProperty({ description: 'News publication date' })
+  @IsDate()
   @IsOptional()
-  @IsString()
-  tags?: string;
+  publishedAt?: Date;
 }
 
 export class UpdateNewsDto {

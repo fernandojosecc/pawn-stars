@@ -49,9 +49,8 @@ export const ContactInfoBlocks: React.FC = () => {
           <Button variant="outline" className="w-full">
             Send us an email
           </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
 
       {/* Social Links Block */}
       <Card>
@@ -81,46 +80,10 @@ export const ContactInfoBlocks: React.FC = () => {
               className="flex items-center gap-2 text-primary-600 hover:text-accent-600 transition-colors"
             >
               <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                <span className="text-2xl">📘</span>
+                <span className="text-2xl">f</span>
               </div>
               <div>
                 <Body size="base" className="font-medium">Facebook</Body>
-                <Body size="sm" className="text-primary-500">Pawn Stars</Body>
-              </div>
-            </a>
-            <a 
-              href="https://instagram.com/pawnstars" 
-              className="flex items-center gap-2 text-primary-600 hover:text-accent-600 transition-colors"
-            >
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                <span className="text-2xl">📷</span>
-              </div>
-              <div>
-                <Body size="base" className="font-medium">Instagram</Body>
-                <Body size="sm" className="text-primary-500">@pawnstars</Body>
-              </div>
-            </a>
-            <a 
-              href="https://linkedin.com/company/pawn-stars" 
-              className="flex items-center gap-2 text-primary-600 hover:text-accent-600 transition-colors"
-            >
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                <span className="text-2xl">💼</span>
-              </div>
-              <div>
-                <Body size="base" className="font-medium">LinkedIn</Body>
-                <Body size="sm" className="text-primary-500">Pawn Stars</Body>
-              </div>
-            </a>
-            <a 
-              href="https://youtube.com/pawnstars" 
-              className="flex items-center gap-2 text-primary-600 hover:text-accent-600 transition-colors"
-            >
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                <span className="text-2xl">📺</span>
-              </div>
-              <div>
-                <Body size="base" className="font-medium">YouTube</Body>
                 <Body size="sm" className="text-primary-500">Pawn Stars</Body>
               </div>
             </a>
@@ -132,43 +95,34 @@ export const ContactInfoBlocks: React.FC = () => {
       <Card>
         <CardContent className="p-6">
           <Heading level="h3" className="mb-4 flex items-center gap-2">
-            <span className="text-2xl">🎤</span>
+            <span className="text-2xl">📰</span>
             Press Contact
           </Heading>
           <Body size="base" className="text-primary-600 mb-4">
-            Members of the press can reach out to our media relations team for press releases, interviews, and media coverage.
+            For media inquiries, press releases, and interview requests, please contact our press team.
           </Body>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-                <span className="text-primary-600 font-bold text-lg">📰</span>
+                <span className="text-primary-600 font-bold text-lg">📧</span>
               </div>
               <div>
-                <Body size="base" className="font-medium">Media Relations</Body>
+                <Body size="base" className="font-medium">Media Email</Body>
                 <Body size="sm" className="text-primary-500">media@pawnstars.com</Body>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-                <span className="text-primary-600 font-bold text-lg">📞</span>
+                <span className="text-primary-600 font-bold text-lg">📱</span>
               </div>
               <div>
-                <Body size="base" className="font-medium">Press Inquiries</Body>
-                <Body size="sm" className="text-primary-500">press@pawnstars.com</Body>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-                <span className="text-primary-600 font-bold text-lg">📸</span>
-              </div>
-              <div>
-                <Body size="base" className="font-medium">Interview Requests</Body>
-                <Body size="sm" className="text-primary-500">interviews@pawnstars.com</Body>
+                <Body size="base" className="font-medium">Press Hotline</Body>
+                <Body size="sm" className="text-primary-500">+1 (555) 123-4567</Body>
               </div>
             </div>
           </div>
           <Button variant="outline" className="w-full">
-            Contact Press Team
+            View Press Kit
           </Button>
         </CardContent>
       </Card>

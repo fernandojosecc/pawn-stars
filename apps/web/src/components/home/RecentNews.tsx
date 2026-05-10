@@ -23,42 +23,55 @@ export const RecentNews: React.FC<RecentNewsProps> = ({
       id: "1",
       slug: "pawn-stars-win-national-championship",
       title: "Pawn Stars A Team Claims National Championship Title",
-      summary: "In a stunning display of strategic brilliance, our A team secured first place in the National Chess Championship, defeating top-ranked opponents in the final round.",
-      coverUrl: "/news/championship-win.jpg",
-      tags: ["tournament", "championship", "team"],
-      publishedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) // 2 days ago
+      excerpt: "In a stunning display of strategic brilliance, our A team secured first place in the National Chess Championship.",
+      category: "MATCH_REPORTS" as const,
+      author: "Chess News Network",
+      publishedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      coverImage: "/news/championship-win.jpg",
+      readTime: 5,
+      featured: true,
+      tags: "tournament, championship, team"
     },
     {
       id: "2", 
       slug: "magnus-carlsen-joins-training-camp",
       title: "World Champion Magnus Carlsen Joins Training Camp",
-      summary: "Former World Champion Magnus Carlsen will be leading an exclusive training camp for our team members next month, sharing insights from his championship experience.",
-      coverUrl: "/news/carlsen-camp.jpg",
-      tags: ["training", "guest", "grandmaster"],
-      publishedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) // 5 days ago
+      excerpt: "Former World Champion Magnus Carlsen will be leading an exclusive training camp for our team members.",
+      category: "ANNOUNCEMENTS" as const,
+      author: "Team Management",
+      publishedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      coverImage: "/news/carlsen-camp.jpg",
+      readTime: 3,
+      featured: false,
+      tags: "training, guest, grandmaster"
     },
     {
       id: "3",
-      slug: "junior-tournament-success",
-      title: "Junior Players Shine in Regional Tournament",
-      summary: "Our young talents demonstrated exceptional skill at the Regional Junior Tournament, bringing home multiple medals and qualification spots for national events.",
-      coverUrl: "/news/junior-success.jpg", 
-      tags: ["junior", "tournament", "development"],
-      publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // 1 week ago
+      slug: "new-sponsorship-announced",
+      title: "Major Sponsorship Deal Announced",
+      excerpt: "We're thrilled to announce a new partnership with a leading tech company.",
+      category: "ANNOUNCEMENTS" as const,
+      author: "Business Development",
+      publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      coverImage: "/news/sponsorship.jpg",
+      readTime: 4,
+      featured: false,
+      tags: "sponsorship, partnership, business"
     }
   ]
 
   const displayNews = news.length > 0 ? news : mockNews
   const recentNews = displayNews.slice(0, limit)
 
-  const getCategoryColor = (tags: string[]) => {
-    if (tags.includes("tournament")) return "bg-accent-100 text-accent-800"
-    if (tags.includes("training")) return "bg-success-100 text-success-800"
-    if (tags.includes("junior")) return "bg-primary-100 text-primary-800"
-    return "bg-primary-50 text-primary-700"
+  const getCategoryColor = (category: string) => {
+    if (category === "MATCH_REPORTS") return "bg-accent-100 text-accent-800"
+    if (category === "ANNOUNCEMENTS") return "bg-success-100 text-success-800"
+    if (category === "TRANSFERS") return "bg-primary-100 text-primary-800"
+    return "bg-neutral-100 text-neutral-800"
   }
 
-  const getCategoryName = (tags: string[]) => {
+  const getCategoryName = (tags?: string) => {
+    if (!tags) return "News"
     if (tags.includes("tournament")) return "Tournament"
     if (tags.includes("training")) return "Training"
     if (tags.includes("junior")) return "Development"
@@ -104,11 +117,11 @@ export const RecentNews: React.FC<RecentNewsProps> = ({
             >
               {/* Cover image */}
               <div className="aspect-video w-full bg-gradient-to-br from-primary-200 to-primary-300 overflow-hidden">
-                {article.coverUrl ? (
+                {article.coverImage ? (
                   <img
-                    src={article.coverUrl}
+                    src={article.coverImage || "/placeholder-news.jpg"}
                     alt={article.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
@@ -121,8 +134,8 @@ export const RecentNews: React.FC<RecentNewsProps> = ({
                 {/* Category and date */}
                 <div className="flex items-center justify-between mb-3">
                   {showCategory && (
-                    <Badge className={getCategoryColor(article.tags)}>
-                      {getCategoryName(article.tags)}
+                    <Badge variant="secondary" className={getCategoryColor(article.category)}>
+                      {getCategoryName(article.category)}
                     </Badge>
                   )}
                   <span className="text-sm text-primary-500 font-medium">
@@ -136,21 +149,21 @@ export const RecentNews: React.FC<RecentNewsProps> = ({
                 </h3>
 
                 {/* Summary */}
-                {article.summary && (
-                  <Body size="sm" className="text-primary-600 mb-4 line-clamp-3">
-                    {article.summary}
-                  </Body>
+                {article.excerpt && (
+                  <p className="text-sm text-primary-600 line-clamp-2">
+                    {article.excerpt}
+                  </p>
                 )}
 
                 {/* Tags */}
-                {article.tags.length > 0 && (
+                {article.tags && (
                   <div className="flex flex-wrap gap-1 mb-4">
-                    {article.tags.slice(0, 3).map((tag, tagIndex) => (
+                    {article.tags.split(', ').slice(0, 3).map((tag: string, tagIndex: number) => (
                       <span 
                         key={tagIndex}
                         className="text-xs text-primary-500 bg-primary-100 px-2 py-1 rounded-full"
                       >
-                        #{tag}
+                        {tag}
                       </span>
                     ))}
                   </div>

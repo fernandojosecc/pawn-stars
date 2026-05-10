@@ -21,7 +21,7 @@ export class ContactService {
       id: crypto.randomUUID(),
       name: createContactDto.name || 'Anonymous',
       email: createContactDto.email,
-      subject: createContactDto.subject,
+      subject: createContactDto.subject as ContactSubject,
       message: createContactDto.message,
       submittedAt: new Date(),
       ipAddress: '127.0.0.1' // Mock IP for development

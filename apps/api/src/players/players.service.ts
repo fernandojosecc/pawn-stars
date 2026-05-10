@@ -405,7 +405,7 @@ export class PlayersService {
     offset?: number;
     filter?: string;
     sort?: string;
-  }) {
+  }): Promise<{ hits: PlayerDocument[]; totalHits: number | undefined; limit: number; offset: number; processingTimeMs: number; query: string }> {
     return this.meilisearchService.searchPlayers(query, options);
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query, HttpStatus, Param } from '@nestjs/common';
+import { Controller, Get, Post, Query, HttpStatus, Param, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ContactService } from './contact.service';
 import { CreateContactDto, ContactQueryDto } from './dto/contact.dto';
@@ -16,7 +16,7 @@ export class ContactController {
     try {
       return await this.contactService.createSubmission(createContactDto);
     } catch (error) {
-      throw new Error(`Failed to create contact submission: ${error.message}`);
+      throw new Error(`Failed to create contact submission: ${(error as Error).message}`);
     }
   }
 

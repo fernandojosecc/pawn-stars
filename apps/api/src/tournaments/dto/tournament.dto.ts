@@ -18,7 +18,7 @@ export enum TournamentStatus {
 export class CreateTournamentDto {
   @ApiProperty({ description: 'Tournament name' })
   @IsString()
-  name: string;
+  name!: string;
 
   @ApiPropertyOptional({ description: 'Tournament description' })
   @IsOptional()
@@ -27,11 +27,15 @@ export class CreateTournamentDto {
 
   @ApiProperty({ description: 'Tournament format' })
   @IsEnum(TournamentFormat)
-  format: TournamentFormat;
+  format!: TournamentFormat;
+
+  @ApiProperty({ description: 'Tournament status' })
+  @IsEnum(TournamentStatus)
+  status!: TournamentStatus;
 
   @ApiProperty({ description: 'Tournament start date' })
   @IsDate()
-  startDate: Date;
+  startDate!: Date;
 
   @ApiPropertyOptional({ description: 'Tournament end date' })
   @IsOptional()

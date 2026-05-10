@@ -9,7 +9,7 @@ export interface SelectProps {
 }
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-  ({ value, onValueChange, children }, ref) => {
+  ({ value, onValueChange, children, disabled }, ref) => {
     return (
       <select
         ref={ref}

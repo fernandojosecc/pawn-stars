@@ -128,7 +128,7 @@ export default function ContactPage() {
                 </Body>
                 <ContactForm
                   onSubmit={handleFormSubmit}
-                  error={null} // Error handling would be implemented here
+                  error={undefined} // Error handling would be implemented here
                 />
               </div>
             </div>

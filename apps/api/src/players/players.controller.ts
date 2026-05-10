@@ -1,5 +1,5 @@
-import { Controller, Get, Query, Param, ParseUUIDPipe, NotFoundException } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Query, ParseUUIDPipe, Param, NotFoundException } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { PlayersService } from './players.service';
 import { PlayerQueryDto } from './dto/player.dto';
 
@@ -11,7 +11,13 @@ export class PlayersController {
   @Get()
   @ApiOperation({ summary: 'Get all players with filtering and pagination' })
   @ApiResponse({ status: 200, description: 'Players retrieved successfully' })
-  async findAll(@Query() query: PlayerQueryDto) {
+  async findAll(@Query() query: PlayerQueryDto): Promise<{
+  players: any[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}> {
     return this.playersService.findAll(query);
   }
 
@@ -41,7 +47,7 @@ export class PlayersController {
   @ApiParam({ name: 'id', description: 'Player ID' })
   @ApiResponse({ status: 200, description: 'Player found successfully' })
   @ApiResponse({ status: 404, description: 'Player not found' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<any> {
     const player = await this.playersService.findOne(id);
     if (!player) {
       throw new NotFoundException('Player not found');
@@ -54,7 +60,7 @@ export class PlayersController {
   @ApiParam({ name: 'slug', description: 'Player slug' })
   @ApiResponse({ status: 200, description: 'Player found successfully' })
   @ApiResponse({ status: 404, description: 'Player not found' })
-  async findBySlug(@Param('slug') slug: string) {
+  async findBySlug(@Param('slug') slug: string): Promise<any> {
     const player = await this.playersService.findBySlug(slug);
     if (!player) {
       throw new NotFoundException('Player not found');
