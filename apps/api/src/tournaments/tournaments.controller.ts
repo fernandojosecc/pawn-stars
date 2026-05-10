@@ -75,4 +75,17 @@ export class TournamentsController {
     }
     return tournament;
   }
+
+  @Get('detail/:slug')
+  @ApiOperation({ summary: 'Get full tournament detail by slug (rounds, pairings, standings, timeline)' })
+  @ApiResponse({ status: 200, description: 'Tournament detail retrieved successfully' })
+  @ApiResponse({ status: 404, description: 'Tournament not found' })
+  @ApiParam({ name: 'slug', description: 'Tournament slug' })
+  async findDetailBySlug(@Param('slug') slug: string) {
+    const tournament = await this.tournamentsService.findBySlugWithDetail(slug);
+    if (!tournament) {
+      throw new NotFoundException('Tournament not found');
+    }
+    return tournament;
+  }
 }

@@ -60,8 +60,57 @@ export interface Pairing {
   createdAt: Date;
 }
 
-export type GameResult = 
+export type GameResult =
   | '1-0'
   | '0-1'
   | '1/2-1/2'
   | '*'; // unfinished/forfeit
+
+export interface TournamentParticipant {
+  playerId: string
+  playerName: string
+  playerTitle?: string
+  playerNationality?: string
+  rating?: number
+}
+
+export interface TournamentPairingDetail {
+  board: number
+  white: TournamentParticipant
+  black: TournamentParticipant
+  result?: GameResult
+}
+
+export interface TournamentRoundDetail {
+  roundNumber: number
+  status: RoundStatus
+  date?: string
+  pairings: TournamentPairingDetail[]
+}
+
+export interface TournamentStandingEntry {
+  rank: number
+  player: TournamentParticipant
+  score: number
+  tiebreak?: number
+  wins: number
+  draws: number
+  losses: number
+  gamesPlayed: number
+}
+
+export interface TimelineEvent {
+  roundNumber?: number
+  date: string
+  title: string
+  description?: string
+  type: 'round_start' | 'round_end' | 'highlight' | 'milestone'
+}
+
+export interface TournamentDetail extends TournamentCard {
+  description?: string
+  playerCount: number
+  rounds: TournamentRoundDetail[]
+  standings: TournamentStandingEntry[]
+  timeline: TimelineEvent[]
+}
