@@ -35,3 +35,4 @@ export interface PlayerFilter {
     minRating?: number;
     maxRating?: number;
 }
+//# sourceMappingURL=player.types.d.ts.map

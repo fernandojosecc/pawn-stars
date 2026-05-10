@@ -51,3 +51,4 @@ export interface TeamPage {
     team: Team;
     staff: Staff[];
 }
+//# sourceMappingURL=team.types.d.ts.map

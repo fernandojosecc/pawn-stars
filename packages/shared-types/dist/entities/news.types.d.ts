@@ -36,3 +36,4 @@ export interface BlogPost {
     createdAt: Date;
     updatedAt: Date;
 }
+//# sourceMappingURL=news.types.d.ts.map

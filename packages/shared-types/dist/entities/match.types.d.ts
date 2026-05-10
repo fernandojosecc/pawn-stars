@@ -41,3 +41,4 @@ export interface MatchPreview {
     homeScore?: number;
     awayScore?: number;
 }
+//# sourceMappingURL=match.types.d.ts.map

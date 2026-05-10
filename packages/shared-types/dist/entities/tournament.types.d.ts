@@ -43,3 +43,4 @@ export interface Pairing {
     createdAt: Date;
 }
 export type GameResult = '1-0' | '0-1' | '1/2-1/2' | '*';
+//# sourceMappingURL=tournament.types.d.ts.map
