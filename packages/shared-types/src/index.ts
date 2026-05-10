@@ -5,6 +5,7 @@ export * from './entities/news.types';
 export * from './entities/match.types';
 export * from './entities/ranking.types';
 export * from './entities/team.types';
+export * from './entities/schedule.types';
 
 // API types will be added later
 // export * from './api/request.types';

@@ -7,9 +7,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MatchesModule } from './matches/matches.module';
 import { RankingsModule } from './rankings/rankings.module';
+import { ScheduleModule } from './schedule/schedule.module';
 
 @Module({
-  imports: [PlayersModule, TournamentsModule, NewsModule, ContactModule, MatchesModule, RankingsModule],
+  imports: [PlayersModule, TournamentsModule, NewsModule, ContactModule, MatchesModule, RankingsModule, ScheduleModule],
   controllers: [AppController],
   providers: [AppService],
 })
