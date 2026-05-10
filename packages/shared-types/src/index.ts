@@ -6,6 +6,7 @@ export * from './entities/match.types';
 export * from './entities/ranking.types';
 export * from './entities/team.types';
 export * from './entities/schedule.types';
+export * from './entities/media.types';
 
 // API types will be added later
 // export * from './api/request.types';
