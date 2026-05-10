@@ -1,5 +1,8 @@
-import { Controller, Get, Query, Param, ParseUUIDPipe, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Query, Param, Body, ParseUUIDPipe, NotFoundException, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 import { TournamentsService } from './tournaments.service';
 import { TournamentQueryDto } from './dto/tournament.dto';
 
@@ -87,5 +90,34 @@ export class TournamentsController {
       throw new NotFoundException('Tournament not found');
     }
     return tournament;
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'content_manager')
+  @ApiOperation({ summary: 'Create a new tournament' })
+  @ApiResponse({ status: 201, description: 'Tournament created successfully' })
+  async create(@Body() _body: Record<string, unknown>) {
+    return { message: 'Not implemented' };
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'content_manager')
+  @ApiOperation({ summary: 'Update a tournament' })
+  @ApiParam({ name: 'id', description: 'Tournament ID' })
+  @ApiResponse({ status: 200, description: 'Tournament updated successfully' })
+  async update(@Param('id', ParseUUIDPipe) _id: string, @Body() _body: Record<string, unknown>) {
+    return { message: 'Not implemented' };
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @ApiOperation({ summary: 'Delete a tournament' })
+  @ApiParam({ name: 'id', description: 'Tournament ID' })
+  @ApiResponse({ status: 200, description: 'Tournament deleted successfully' })
+  async remove(@Param('id', ParseUUIDPipe) _id: string) {
+    return { message: 'Not implemented' };
   }
 }

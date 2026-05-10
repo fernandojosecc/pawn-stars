@@ -1,5 +1,8 @@
-import { Controller, Get, Query, ParseUUIDPipe, Param, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Query, Param, Body, NotFoundException, UseGuards, ParseUUIDPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 import { PlayersService } from './players.service';
 import { PlayerQueryDto } from './dto/player.dto';
 
@@ -66,5 +69,34 @@ export class PlayersController {
       throw new NotFoundException('Player not found');
     }
     return player;
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'content_manager', 'coach')
+  @ApiOperation({ summary: 'Create a new player' })
+  @ApiResponse({ status: 201, description: 'Player created successfully' })
+  async create(@Body() _body: Record<string, unknown>) {
+    return { message: 'Not implemented' };
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'content_manager', 'coach')
+  @ApiOperation({ summary: 'Update a player' })
+  @ApiParam({ name: 'id', description: 'Player ID' })
+  @ApiResponse({ status: 200, description: 'Player updated successfully' })
+  async update(@Param('id', ParseUUIDPipe) _id: string, @Body() _body: Record<string, unknown>) {
+    return { message: 'Not implemented' };
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @ApiOperation({ summary: 'Delete a player' })
+  @ApiParam({ name: 'id', description: 'Player ID' })
+  @ApiResponse({ status: 200, description: 'Player deleted successfully' })
+  async remove(@Param('id', ParseUUIDPipe) _id: string) {
+    return { message: 'Not implemented' };
   }
 }

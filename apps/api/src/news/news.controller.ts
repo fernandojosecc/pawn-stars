@@ -1,5 +1,8 @@
-import { Controller, Get, Query, Param, ParseUUIDPipe, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Query, Param, Body, ParseUUIDPipe, NotFoundException, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 import { NewsService, NewsCard, NewsDetail } from './news.service';
 import { NewsQueryDto } from './dto/news.dto';
 
@@ -76,5 +79,34 @@ export class NewsController {
       throw new NotFoundException('News article not found');
     }
     return news;
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'content_manager')
+  @ApiOperation({ summary: 'Create a news article' })
+  @ApiResponse({ status: 201, description: 'News article created successfully' })
+  async create(@Body() _body: Record<string, unknown>) {
+    return { message: 'Not implemented' };
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'content_manager')
+  @ApiOperation({ summary: 'Update a news article' })
+  @ApiParam({ name: 'id', description: 'News article ID' })
+  @ApiResponse({ status: 200, description: 'News article updated successfully' })
+  async update(@Param('id', ParseUUIDPipe) _id: string, @Body() _body: Record<string, unknown>) {
+    return { message: 'Not implemented' };
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @ApiOperation({ summary: 'Delete a news article' })
+  @ApiParam({ name: 'id', description: 'News article ID' })
+  @ApiResponse({ status: 200, description: 'News article deleted successfully' })
+  async remove(@Param('id', ParseUUIDPipe) _id: string) {
+    return { message: 'Not implemented' };
   }
 }

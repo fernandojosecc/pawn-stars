@@ -8,6 +8,7 @@ export * from './entities/team.types';
 export * from './entities/schedule.types';
 export * from './entities/media.types';
 export * from './entities/sponsor.types';
+export * from './entities/auth.types';
 
 // API types will be added later
 // export * from './api/request.types';

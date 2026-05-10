@@ -10,9 +10,10 @@ import { RankingsModule } from './rankings/rankings.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { MediaModule } from './media/media.module';
 import { SponsorsModule } from './sponsors/sponsors.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [PlayersModule, TournamentsModule, NewsModule, ContactModule, MatchesModule, RankingsModule, ScheduleModule, MediaModule, SponsorsModule],
+  imports: [AuthModule, PlayersModule, TournamentsModule, NewsModule, ContactModule, MatchesModule, RankingsModule, ScheduleModule, MediaModule, SponsorsModule],
   controllers: [AppController],
   providers: [AppService],
 })
