@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
 import { PlayersModule } from './players/players.module';
 import { TournamentsModule } from './tournaments/tournaments.module';
 import { NewsModule } from './news/news.module';
@@ -11,9 +12,23 @@ import { ScheduleModule } from './schedule/schedule.module';
 import { MediaModule } from './media/media.module';
 import { SponsorsModule } from './sponsors/sponsors.module';
 import { AuthModule } from './auth/auth.module';
+import { RatingsModule } from './ratings/ratings.module';
 
 @Module({
-  imports: [AuthModule, PlayersModule, TournamentsModule, NewsModule, ContactModule, MatchesModule, RankingsModule, ScheduleModule, MediaModule, SponsorsModule],
+  imports: [
+    NestScheduleModule.forRoot(),
+    AuthModule,
+    PlayersModule,
+    TournamentsModule,
+    NewsModule,
+    ContactModule,
+    MatchesModule,
+    RankingsModule,
+    ScheduleModule,
+    MediaModule,
+    SponsorsModule,
+    RatingsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

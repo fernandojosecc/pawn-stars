@@ -4,6 +4,7 @@ export * from './entities/tournament.types';
 export * from './entities/news.types';
 export * from './entities/match.types';
 export * from './entities/ranking.types';
+export * from './entities/rating.types';
 export * from './entities/team.types';
 export * from './entities/schedule.types';
 export * from './entities/media.types';
