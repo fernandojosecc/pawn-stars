@@ -7,13 +7,16 @@ import { SponsorshipCTA } from "@/components/sponsors/SponsorshipCTA"
 import type { Sponsor } from "@pawn-stars/shared-types"
 
 export const metadata: Metadata = {
-  title: "Sponsors | Pawn Stars",
+  title: "Sponsors",
   description:
     "Meet the organisations backing Pawn Stars — our title, gold, silver and partner sponsors who make elite chess possible.",
+  alternates: { canonical: "https://pawnstars.com/sponsors" },
   openGraph: {
     title: "Sponsors — Pawn Stars",
     description: "The organisations behind Pawn Stars — title, gold, silver and partner sponsors.",
     type: "website",
+    url: "https://pawnstars.com/sponsors",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Pawn Stars Sponsors" }],
   },
 }
 

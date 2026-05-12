@@ -3,7 +3,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Heading } from "@/components/typography/Heading"
 import { Body } from "@/components/typography/Body"
+import { articleSchema } from "@/lib/structured-data"
 import { NewsCard, NewsCategory } from "@pawn-stars/shared-types"
+import type { Metadata } from "next"
 
 // Mock data for development - this would come from API in production
 const mockNewsArticles: (NewsCard & { content: string; updatedAt: Date })[] = [
@@ -163,82 +165,43 @@ const mockNewsArticles: (NewsCard & { content: string; updatedAt: Date })[] = [
   }
 ]
 
-// Generate static params for all news slugs
-export async function generateStaticParams() {
-  const articles = mockNewsArticles.map((article) => ({
-    slug: article.slug,
-  }))
-  
-  return articles
+export function generateStaticParams() {
+  return mockNewsArticles.map((article) => ({ slug: article.slug }))
 }
 
-// Generate metadata for each news article
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const article = mockNewsArticles.find(a => a.slug === params.slug)
-  
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
+  const { slug } = await params
+  const article = mockNewsArticles.find(a => a.slug === slug)
+
   if (!article) {
-    return {
-      title: "Article Not Found - Pawn Stars",
-      description: "The requested article could not be found.",
-    }
+    return { title: "Article Not Found", description: "The requested article could not be found." }
   }
 
   return {
-    title: `${article.title} - Pawn Stars Chess Organization`,
+    title: article.title,
     description: article.excerpt,
-    keywords: [
-      article.title,
-      "chess",
-      "pawn stars",
-      article.category.toLowerCase(),
-      article.author,
-      ...(article.tags ? article.tags.split(', ') : [])
-    ].filter(Boolean),
+    keywords: ["chess", "pawn stars", article.category.toLowerCase(), article.author, ...(article.tags?.split(", ") ?? [])].filter(Boolean),
+    alternates: { canonical: `https://pawnstars.com/news/${article.slug}` },
     openGraph: {
       title: article.title,
       description: article.excerpt,
       type: "article",
-      locale: "en_US",
       url: `https://pawnstars.com/news/${article.slug}`,
-      siteName: "Pawn Stars",
-      images: [
-        {
-          url: article.coverImage || "/default-news.jpg",
-          width: 1200,
-          height: 630,
-          alt: article.title,
-        },
-      ],
+      images: [{ url: article.coverImage || "/og-image.jpg", width: 1200, height: 630, alt: article.title }],
       publishedTime: article.publishedAt.toISOString(),
       modifiedTime: article.updatedAt.toISOString(),
       authors: [article.author],
       section: article.category,
-      tags: article.tags ? article.tags.split(', ') : [],
-    },
-    twitter: {
-      card: "summary_large_image",
-      site: "@pawnstars",
-      creator: "@pawnstars",
-    },
-    alternates: {
-      canonical: `https://pawnstars.com/news/${article.slug}`,
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
+      tags: article.tags?.split(", ") ?? [],
     },
   }
 }
 
-export default function NewsDetailPage({ params }: { params: { slug: string } }) {
-  const article = mockNewsArticles.find(a => a.slug === params.slug)
+export default async function NewsDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const article = mockNewsArticles.find(a => a.slug === slug)
 
   if (!article) {
     return (
@@ -299,8 +262,14 @@ export default function NewsDetailPage({ params }: { params: { slug: string } })
     })
   }
 
+  const ldJson = articleSchema(article)
+
   return (
     <div className="min-h-screen bg-primary-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }}
+      />
       {/* Article Header */}
       <header className="bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

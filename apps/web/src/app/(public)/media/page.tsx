@@ -6,13 +6,16 @@ import { MediaContent } from "@/components/media/MediaContent"
 import type { MediaAsset } from "@pawn-stars/shared-types"
 
 export const metadata: Metadata = {
-  title: "Media | Pawn Stars",
+  title: "Media",
   description:
     "Official Pawn Stars media library — match photos, video highlights, press kits and tournament documents.",
+  alternates: { canonical: "https://pawnstars.com/media" },
   openGraph: {
     title: "Media Library — Pawn Stars",
     description: "Photos, videos and press assets from Pawn Stars matches and tournaments.",
     type: "website",
+    url: "https://pawnstars.com/media",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Pawn Stars Media Library" }],
   },
 }
 

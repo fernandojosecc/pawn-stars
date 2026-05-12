@@ -146,12 +146,18 @@ export async function generateMetadata({
   const { id } = await params
   const match = mockMatches[id]
   if (!match) return { title: "Match Not Found" }
+  const title = `${match.homeTeam.name} vs ${match.awayTeam.name}`
+  const description = `${title}${match.venue ? ` at ${match.venue}` : ""} — ${new Date(match.date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}`
   return {
-    title: `${match.homeTeam.name} vs ${match.awayTeam.name} | Pawn Stars`,
-    description: `Match details: ${match.homeTeam.name} vs ${match.awayTeam.name}${match.venue ? ` at ${match.venue}` : ""}`,
+    title,
+    description,
+    alternates: { canonical: `https://pawnstars.com/matches/${id}` },
     openGraph: {
-      title: `${match.homeTeam.name} vs ${match.awayTeam.name}`,
-      description: `Match details on ${new Date(match.date).toLocaleDateString()}`,
+      title,
+      description,
+      type: "website",
+      url: `https://pawnstars.com/matches/${id}`,
+      images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: title }],
     },
   }
 }

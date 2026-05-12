@@ -6,14 +6,16 @@ import { RankingsContent } from "@/components/rankings/RankingsContent"
 import type { TeamRanking, PlayerRanking, PlayerEloHistory } from "@pawn-stars/shared-types"
 
 export const metadata: Metadata = {
-  title: "Rankings | Pawn Stars",
+  title: "Rankings",
   description:
     "Pawn Stars team standings, individual player ratings by modality, and ELO evolution charts for the 2024–25 season.",
+  alternates: { canonical: "https://pawnstars.com/rankings" },
   openGraph: {
     title: "Rankings — Pawn Stars",
-    description:
-      "Team standings, player ratings (classical/rapid/blitz), and ELO evolution for the 2024–25 season.",
+    description: "Team standings, player ratings (classical/rapid/blitz), and ELO evolution for the 2024–25 season.",
     type: "website",
+    url: "https://pawnstars.com/rankings",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Pawn Stars Rankings" }],
   },
 }
 

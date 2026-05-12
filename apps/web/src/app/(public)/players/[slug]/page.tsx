@@ -2,7 +2,9 @@ import { PlayerBioSection } from "@/components/player-detail/PlayerBio"
 import { RatingsHistorySection } from "@/components/player-detail/RatingsHistory"
 import { RecentFormSection } from "@/components/player-detail/RecentForm"
 import { TournamentResultsSection } from "@/components/player-detail/TournamentResults"
+import { personSchema } from "@/lib/structured-data"
 import { Player } from "@pawn-stars/shared-types"
+import type { Metadata } from "next"
 
 // Mock data for development - this would come from API in production
 const mockPlayers: Player[] = [
@@ -93,79 +95,43 @@ const mockPlayers: Player[] = [
   }
 ]
 
-// Generate static params for all player slugs
-export async function generateStaticParams() {
-  const players = mockPlayers.map((player) => ({
-    slug: player.slug,
-  }))
-  
-  return players
+export function generateStaticParams() {
+  return mockPlayers.map((player) => ({ slug: player.slug }))
 }
 
-// Generate metadata for each player page
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const player = mockPlayers.find(p => p.slug === params.slug)
-  
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
+  const { slug } = await params
+  const player = mockPlayers.find(p => p.slug === slug)
+
   if (!player) {
     return {
-      title: "Player Not Found - Pawn Stars",
+      title: "Player Not Found",
       description: "The requested player could not be found.",
     }
   }
 
+  const description = `${player.title} from ${player.nationality} — FIDE rating ${player.currentRating}. ${player.bio?.slice(0, 150) ?? ""}…`
+
   return {
-    title: `${player.firstName} ${player.lastName} - Pawn Stars Chess Organization`,
-    description: `Profile of ${player.firstName} ${player.lastName}, ${player.title} from ${player.nationality} with FIDE rating ${player.currentRating}. ${player.bio?.slice(0, 150)}...`,
-    keywords: [
-      `${player.firstName} ${player.lastName}`,
-      "chess",
-      "grandmaster",
-      player.nationality,
-      "FIDE",
-      "rating",
-      "pawn stars",
-      player.title || ""
-    ].filter(Boolean),
+    title: `${player.firstName} ${player.lastName} (${player.title})`,
+    description,
+    keywords: [`${player.firstName} ${player.lastName}`, "chess", player.nationality, "FIDE", player.title ?? ""].filter(Boolean),
+    alternates: { canonical: `https://pawnstars.com/players/${player.slug}` },
     openGraph: {
-      title: `${player.firstName} ${player.lastName} (${player.currentRating}) - Pawn Stars`,
-      description: `${player.title} from ${player.nationality} with FIDE rating ${player.currentRating}. ${player.bio?.slice(0, 150)}...`,
+      title: `${player.firstName} ${player.lastName} (${player.currentRating}) — Pawn Stars`,
+      description,
       type: "profile",
-      locale: "en_US",
       url: `https://pawnstars.com/players/${player.slug}`,
-      siteName: "Pawn Stars",
-      images: [
-        {
-          url: player.photoUrl || "/default-player.jpg",
-          width: 800,
-          height: 800,
-          alt: `${player.firstName} ${player.lastName}`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      site: "@pawnstars",
-      creator: "@pawnstars",
-    },
-    alternates: {
-      canonical: `https://pawnstars.com/players/${player.slug}`,
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
+      images: [{ url: player.photoUrl || "/og-image.jpg", width: 800, height: 800, alt: `${player.firstName} ${player.lastName}` }],
     },
   }
 }
 
-export default function PlayerDetailPage({ params }: { params: { slug: string } }) {
-  const player = mockPlayers.find(p => p.slug === params.slug)
+export default async function PlayerDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const player = mockPlayers.find(p => p.slug === slug)
 
   if (!player) {
     return (
@@ -184,8 +150,14 @@ export default function PlayerDetailPage({ params }: { params: { slug: string } 
     )
   }
 
+  const ldJson = personSchema(player)
+
   return (
     <div className="min-h-screen bg-primary-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }}
+      />
       {/* Player Bio Section */}
       <PlayerBioSection player={player} showFullBio={true} />
       

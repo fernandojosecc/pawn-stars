@@ -80,55 +80,22 @@ const mockStaff: Staff[] = [
   }
 ]
 
-// Generate static params for SSG
-export async function generateStaticParams() {
-  // In production, this would fetch from your API/database
-  // For now, we return the main team slug
-  return [
-    {
-      slug: 'pawn-stars'
-    }
-  ]
+export const metadata: Metadata = {
+  title: "Our Team",
+  description: mockTeam.description || "Learn about Pawn Stars, our philosophy, history, and the dedicated staff who make our chess organization exceptional.",
+  alternates: { canonical: "https://pawnstars.com/team" },
+  openGraph: {
+    title: "Our Team — Pawn Stars",
+    description: mockTeam.description || "Philosophy, history, and the dedicated staff behind Pawn Stars Chess Organization.",
+    type: "website",
+    url: "https://pawnstars.com/team",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Pawn Stars Team" }],
+  },
 }
 
-// Generate metadata for SEO
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const team = mockTeam // In production, fetch team by slug
-  
-  return {
-    title: `${team.name} - Our Team`,
-    description: team.description || `Learn about ${team.name}, our philosophy, history, and the dedicated staff who make our chess organization exceptional.`,
-    openGraph: {
-      title: `${team.name} - Our Team`,
-      description: team.description || `Learn about ${team.name}, our philosophy, history, and the dedicated staff who make our chess organization exceptional.`,
-      type: "website",
-      locale: "en_US",
-      url: `https://pawnstars.com/team/${team.slug}`,
-      siteName: "Pawn Stars",
-      images: [
-        {
-          url: "https://pawnstars.com/og-image-team.jpg",
-          width: 1200,
-          height: 630,
-          alt: `${team.name} Team`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      site: "@pawnstars",
-      creator: "@pawnstars",
-    },
-    alternates: {
-      canonical: `https://pawnstars.com/team/${team.slug}`,
-    },
-  }
-}
-
-// Main team page component
-export default function TeamPage({ params }: { params: { slug: string } }) {
-  const team = mockTeam // In production, fetch team by slug from params.slug
-  const staff = mockStaff // In production, fetch staff for this team
+export default function TeamPage() {
+  const team = mockTeam
+  const staff = mockStaff
 
   return (
     <div className="min-h-screen">

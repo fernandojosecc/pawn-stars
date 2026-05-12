@@ -1,0 +1,140 @@
+const BASE_URL = "https://pawnstars.com"
+
+export function organizationSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SportsOrganization",
+    "@id": `${BASE_URL}/#organization`,
+    name: "Pawn Stars",
+    url: BASE_URL,
+    logo: `${BASE_URL}/logo.png`,
+    sameAs: ["https://twitter.com/pawnstars"],
+    sport: "Chess",
+    foundingDate: "2021",
+  }
+}
+
+export function personSchema(player: {
+  slug: string
+  firstName: string
+  lastName: string
+  nationality: string
+  dateOfBirth?: Date | null
+  bio?: string | null
+  photoUrl?: string | null
+  title?: string | null
+  fideId?: string | null
+  currentRating?: number
+}) {
+  const imageUrl = player.photoUrl
+    ? player.photoUrl.startsWith("http")
+      ? player.photoUrl
+      : `${BASE_URL}${player.photoUrl}`
+    : undefined
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": `${BASE_URL}/players/${player.slug}#person`,
+    name: `${player.firstName} ${player.lastName}`,
+    url: `${BASE_URL}/players/${player.slug}`,
+    nationality: player.nationality,
+    ...(player.dateOfBirth
+      ? { birthDate: player.dateOfBirth.toISOString().split("T")[0] }
+      : {}),
+    ...(player.bio ? { description: player.bio } : {}),
+    ...(imageUrl ? { image: imageUrl } : {}),
+    ...(player.fideId
+      ? {
+          identifier: {
+            "@type": "PropertyValue",
+            name: "FIDE ID",
+            value: player.fideId,
+          },
+        }
+      : {}),
+    ...(player.title ? { honorificPrefix: player.title } : {}),
+    memberOf: {
+      "@type": "SportsOrganization",
+      "@id": `${BASE_URL}/#organization`,
+      name: "Pawn Stars",
+    },
+  }
+}
+
+export function eventSchema(tournament: {
+  slug: string
+  name: string
+  format: string
+  status: string
+  startDate: Date
+  endDate?: Date | null
+  location?: string | null
+  description?: string | null
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SportsEvent",
+    "@id": `${BASE_URL}/tournaments/${tournament.slug}#event`,
+    name: tournament.name,
+    url: `${BASE_URL}/tournaments/${tournament.slug}`,
+    startDate: tournament.startDate.toISOString(),
+    ...(tournament.endDate
+      ? { endDate: tournament.endDate.toISOString() }
+      : {}),
+    eventStatus: "https://schema.org/EventScheduled",
+    ...(tournament.location
+      ? { location: { "@type": "Place", name: tournament.location } }
+      : {}),
+    ...(tournament.description ? { description: tournament.description } : {}),
+    organizer: {
+      "@type": "SportsOrganization",
+      "@id": `${BASE_URL}/#organization`,
+      name: "Pawn Stars",
+    },
+    sport: "Chess",
+  }
+}
+
+export function articleSchema(article: {
+  slug: string
+  title: string
+  excerpt?: string | null
+  coverImage?: string | null
+  author: string
+  publishedAt: Date
+  updatedAt?: Date
+  tags?: string
+  category: string
+}) {
+  const imageUrl = article.coverImage
+    ? article.coverImage.startsWith("http")
+      ? article.coverImage
+      : `${BASE_URL}${article.coverImage}`
+    : undefined
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "@id": `${BASE_URL}/news/${article.slug}#article`,
+    headline: article.title,
+    url: `${BASE_URL}/news/${article.slug}`,
+    datePublished: article.publishedAt.toISOString(),
+    ...(article.updatedAt
+      ? { dateModified: article.updatedAt.toISOString() }
+      : {}),
+    author: { "@type": "Person", name: article.author },
+    publisher: {
+      "@type": "Organization",
+      "@id": `${BASE_URL}/#organization`,
+      name: "Pawn Stars",
+      logo: { "@type": "ImageObject", url: `${BASE_URL}/logo.png` },
+    },
+    ...(article.excerpt ? { description: article.excerpt } : {}),
+    ...(imageUrl
+      ? { image: { "@type": "ImageObject", url: imageUrl } }
+      : {}),
+    articleSection: article.category,
+    keywords: article.tags ?? "",
+  }
+}

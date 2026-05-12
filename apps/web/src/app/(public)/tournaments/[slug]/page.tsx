@@ -7,6 +7,7 @@ import { TournamentHeader } from "@/components/tournaments/TournamentHeader"
 import { RoundsPairingsTable } from "@/components/tournaments/RoundsPairingsTable"
 import { StandingsTable } from "@/components/tournaments/StandingsTable"
 import { TournamentTimeline } from "@/components/tournaments/TournamentTimeline"
+import { eventSchema } from "@/lib/structured-data"
 import { TOURNAMENT_DETAILS } from "@/lib/mock/tournament-details"
 
 export function generateStaticParams() {
@@ -27,12 +28,15 @@ export async function generateMetadata(
   const description = `${tournament.name} · ${tournament.location ?? ""} · ${dateRange} · ${tournament.format}`
 
   return {
-    title: `${tournament.name} | Pawn Stars`,
+    title: tournament.name,
     description,
+    alternates: { canonical: `https://pawnstars.com/tournaments/${slug}` },
     openGraph: {
       title: tournament.name,
       description,
       type: "website",
+      url: `https://pawnstars.com/tournaments/${slug}`,
+      images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: tournament.name }],
     },
   }
 }
@@ -53,12 +57,17 @@ export default async function TournamentDetailPage(
   const tournament = TOURNAMENT_DETAILS[slug]
   if (!tournament) notFound()
 
+  const ldJson = eventSchema(tournament)
   const hasRounds    = tournament.rounds.length > 0
   const hasStandings = tournament.standings.length > 0
   const hasTimeline  = tournament.timeline.length > 0
 
   return (
     <main className="min-h-screen bg-primary-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }}
+      />
       <TournamentHeader tournament={tournament} />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">

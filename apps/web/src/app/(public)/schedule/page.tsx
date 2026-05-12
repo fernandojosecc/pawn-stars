@@ -6,13 +6,16 @@ import { ScheduleContent } from "@/components/schedule/ScheduleContent"
 import type { ScheduleEvent } from "@pawn-stars/shared-types"
 
 export const metadata: Metadata = {
-  title: "Schedule | Pawn Stars",
+  title: "Schedule",
   description:
     "Full calendar of Pawn Stars matches, tournaments, training sessions and media events for the 2024 season.",
+  alternates: { canonical: "https://pawnstars.com/schedule" },
   openGraph: {
     title: "Schedule — Pawn Stars",
     description: "Matches, tournaments, training and media events — calendar & agenda views.",
     type: "website",
+    url: "https://pawnstars.com/schedule",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Pawn Stars Schedule" }],
   },
 }
 
