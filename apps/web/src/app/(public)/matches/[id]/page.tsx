@@ -1,6 +1,7 @@
 import React from "react"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
+import { matchSchema } from "@/lib/structured-data"
 import { MatchHeader } from "@/components/matches/MatchHeader"
 import { MatchLineup } from "@/components/matches/MatchLineup"
 import { RoundResults } from "@/components/matches/RoundResults"
@@ -173,9 +174,14 @@ export default async function MatchDetailPage({
 
   const isCompleted = match.status === "COMPLETED"
   const hasLineup = match.lineup.home.length > 0 || match.lineup.away.length > 0
+  const ldJson = matchSchema(match)
 
   return (
     <main className="min-h-screen bg-primary-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }}
+      />
       <MatchHeader match={match} />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">

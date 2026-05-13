@@ -27,6 +27,16 @@ const NEWS_SLUGS = [
 
 const MATCH_IDS = ["match-001", "match-002", "match-003"]
 
+const BLOG_SLUGS = [
+  "opening-theory-ruy-lopez",
+  "sinquefield-cup-2024-report",
+  "carlsen-interview-chess-ai",
+  "road-to-2800-elite-analysis",
+  "pawn-stars-season-2023-24-review",
+]
+
+const SEASON_SLUGS = ["2024-25", "2023-24", "2022-23"]
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()
 
@@ -38,6 +48,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/rankings`,         lastModified: now, changeFrequency: "daily",   priority: 0.8 },
     { url: `${BASE_URL}/news`,             lastModified: now, changeFrequency: "daily",   priority: 0.8 },
     { url: `${BASE_URL}/matches`,          lastModified: now, changeFrequency: "daily",   priority: 0.7 },
+    { url: `${BASE_URL}/blog`,             lastModified: now, changeFrequency: "weekly",  priority: 0.8 },
+    { url: `${BASE_URL}/seasons`,          lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE_URL}/media`,            lastModified: now, changeFrequency: "weekly",  priority: 0.6 },
     { url: `${BASE_URL}/sponsors`,         lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE_URL}/schedule`,         lastModified: now, changeFrequency: "daily",   priority: 0.7 },
@@ -72,5 +84,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }))
 
-  return [...staticRoutes, ...playerRoutes, ...tournamentRoutes, ...newsRoutes, ...matchRoutes]
+  const blogRoutes: MetadataRoute.Sitemap = BLOG_SLUGS.map((slug) => ({
+    url: `${BASE_URL}/blog/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly",
+    priority: 0.6,
+  }))
+
+  const seasonRoutes: MetadataRoute.Sitemap = SEASON_SLUGS.map((slug) => ({
+    url: `${BASE_URL}/seasons/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }))
+
+  return [...staticRoutes, ...playerRoutes, ...tournamentRoutes, ...newsRoutes, ...matchRoutes, ...blogRoutes, ...seasonRoutes]
 }

@@ -96,6 +96,42 @@ export function eventSchema(tournament: {
   }
 }
 
+export function matchSchema(match: {
+  id: string
+  homeTeam: { name: string }
+  awayTeam: { name: string }
+  date: Date
+  venue?: string | null
+  status: string
+  homeScore?: number | null
+  awayScore?: number | null
+}) {
+  const eventStatusMap: Record<string, string> = {
+    COMPLETED: 'https://schema.org/EventScheduled',
+    UPCOMING:  'https://schema.org/EventScheduled',
+    LIVE:      'https://schema.org/EventScheduled',
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SportsEvent',
+    '@id': `${BASE_URL}/matches/${match.id}#event`,
+    name: `${match.homeTeam.name} vs ${match.awayTeam.name}`,
+    url: `${BASE_URL}/matches/${match.id}`,
+    startDate: match.date.toISOString(),
+    eventStatus: eventStatusMap[match.status] ?? 'https://schema.org/EventScheduled',
+    sport: 'Chess',
+    ...(match.venue ? { location: { '@type': 'Place', name: match.venue } } : {}),
+    homeTeam: { '@type': 'SportsTeam', name: match.homeTeam.name },
+    awayTeam: { '@type': 'SportsTeam', name: match.awayTeam.name },
+    organizer: {
+      '@type': 'SportsOrganization',
+      '@id': `${BASE_URL}/#organization`,
+      name: 'Pawn Stars',
+    },
+  }
+}
+
 export function blogArticleSchema(post: {
   slug: string
   title: string
