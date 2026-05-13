@@ -32,15 +32,3 @@ export interface NewsCard {
   tags?: string;
 }
 
-export interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  summary?: string;
-  coverUrl?: string;
-  tags: string[];
-  publishedAt?: Date;
-  authorId?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}

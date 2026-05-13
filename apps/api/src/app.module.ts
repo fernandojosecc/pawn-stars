@@ -15,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
 import { RatingsModule } from './ratings/ratings.module';
 import { StatsModule } from './stats/stats.module';
 import { SeasonsModule } from './seasons/seasons.module';
+import { BlogModule } from './blog/blog.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { SeasonsModule } from './seasons/seasons.module';
     RatingsModule,
     StatsModule,
     SeasonsModule,
+    BlogModule,
   ],
   controllers: [AppController],
   providers: [AppService],

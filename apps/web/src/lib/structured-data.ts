@@ -96,6 +96,45 @@ export function eventSchema(tournament: {
   }
 }
 
+export function blogArticleSchema(post: {
+  slug: string
+  title: string
+  excerpt?: string | null
+  coverImage?: string | null
+  author: string
+  publishedAt: Date
+  updatedAt?: Date
+  tags?: string[]
+  category: string
+}) {
+  const imageUrl = post.coverImage
+    ? post.coverImage.startsWith("http")
+      ? post.coverImage
+      : `${BASE_URL}${post.coverImage}`
+    : undefined
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${BASE_URL}/blog/${post.slug}#article`,
+    headline: post.title,
+    url: `${BASE_URL}/blog/${post.slug}`,
+    datePublished: post.publishedAt.toISOString(),
+    ...(post.updatedAt ? { dateModified: post.updatedAt.toISOString() } : {}),
+    author: { "@type": "Person", name: post.author },
+    publisher: {
+      "@type": "Organization",
+      "@id": `${BASE_URL}/#organization`,
+      name: "Pawn Stars",
+      logo: { "@type": "ImageObject", url: `${BASE_URL}/logo.png` },
+    },
+    ...(post.excerpt ? { description: post.excerpt } : {}),
+    ...(imageUrl ? { image: { "@type": "ImageObject", url: imageUrl } } : {}),
+    articleSection: post.category,
+    keywords: (post.tags ?? []).join(", "),
+  }
+}
+
 export function articleSchema(article: {
   slug: string
   title: string
