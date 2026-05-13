@@ -14,6 +14,7 @@ import { SponsorsModule } from './sponsors/sponsors.module';
 import { AuthModule } from './auth/auth.module';
 import { RatingsModule } from './ratings/ratings.module';
 import { StatsModule } from './stats/stats.module';
+import { SeasonsModule } from './seasons/seasons.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { StatsModule } from './stats/stats.module';
     SponsorsModule,
     RatingsModule,
     StatsModule,
+    SeasonsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
