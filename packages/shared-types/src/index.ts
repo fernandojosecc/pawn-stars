@@ -10,6 +10,7 @@ export * from './entities/schedule.types';
 export * from './entities/media.types';
 export * from './entities/sponsor.types';
 export * from './entities/auth.types';
+export * from './entities/stats.types';
 
 // API types will be added later
 // export * from './api/request.types';

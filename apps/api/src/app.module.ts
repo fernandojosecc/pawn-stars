@@ -13,6 +13,7 @@ import { MediaModule } from './media/media.module';
 import { SponsorsModule } from './sponsors/sponsors.module';
 import { AuthModule } from './auth/auth.module';
 import { RatingsModule } from './ratings/ratings.module';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RatingsModule } from './ratings/ratings.module';
     MediaModule,
     SponsorsModule,
     RatingsModule,
+    StatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
