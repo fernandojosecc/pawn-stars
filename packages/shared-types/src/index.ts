@@ -14,6 +14,7 @@ export * from './entities/stats.types.js';
 export * from './entities/season.types.js';
 export * from './entities/blog.types.js';
 export * from './entities/notification.types.js';
+export * from './entities/application.types.js';
 
 // API types will be added later
 // export * from './api/request.types';
