@@ -1,18 +1,19 @@
 // Entity types
-export * from './entities/player.types';
-export * from './entities/tournament.types';
-export * from './entities/news.types';
-export * from './entities/match.types';
-export * from './entities/ranking.types';
-export * from './entities/rating.types';
-export * from './entities/team.types';
-export * from './entities/schedule.types';
-export * from './entities/media.types';
-export * from './entities/sponsor.types';
-export * from './entities/auth.types';
-export * from './entities/stats.types';
-export * from './entities/season.types';
-export * from './entities/blog.types';
+export * from './entities/player.types.js';
+export * from './entities/tournament.types.js';
+export * from './entities/news.types.js';
+export * from './entities/match.types.js';
+export * from './entities/ranking.types.js';
+export * from './entities/rating.types.js';
+export * from './entities/team.types.js';
+export * from './entities/schedule.types.js';
+export * from './entities/media.types.js';
+export * from './entities/sponsor.types.js';
+export * from './entities/auth.types.js';
+export * from './entities/stats.types.js';
+export * from './entities/season.types.js';
+export * from './entities/blog.types.js';
+export * from './entities/notification.types.js';
 
 // API types will be added later
 // export * from './api/request.types';

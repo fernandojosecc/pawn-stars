@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PlayersModule } from './players/players.module';
 import { TournamentsModule } from './tournaments/tournaments.module';
 import { NewsModule } from './news/news.module';
@@ -16,10 +17,12 @@ import { RatingsModule } from './ratings/ratings.module';
 import { StatsModule } from './stats/stats.module';
 import { SeasonsModule } from './seasons/seasons.module';
 import { BlogModule } from './blog/blog.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
     NestScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
     AuthModule,
     PlayersModule,
     TournamentsModule,
@@ -34,6 +37,7 @@ import { BlogModule } from './blog/blog.module';
     StatsModule,
     SeasonsModule,
     BlogModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

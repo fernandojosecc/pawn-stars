@@ -76,6 +76,9 @@
     },
     {
       "path": "./packages/shared-types"
+    },
+    {
+      "path": "./packages/email-templates"
     }
   ]
 }
