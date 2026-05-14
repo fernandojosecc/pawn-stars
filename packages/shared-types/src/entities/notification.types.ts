@@ -50,3 +50,18 @@ export interface SendNotificationResult {
   recipients: string[];
   devMode: boolean;
 }
+
+export type PortalNotificationType =
+  | 'match_result'
+  | 'round_complete'
+  | 'team_announcement'
+  | 'trial_status';
+
+export interface PortalNotification {
+  id: string;
+  type: PortalNotificationType;
+  title: string;
+  body: string;
+  read: boolean;
+  createdAt: Date;
+}

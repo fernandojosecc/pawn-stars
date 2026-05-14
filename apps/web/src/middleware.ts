@@ -66,6 +66,10 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/403', req.url));
   }
 
+  if (isPortalRoute && payload.role !== 'player') {
+    return NextResponse.redirect(new URL('/403', req.url));
+  }
+
   if (isScoutingRoute && payload.role !== 'coach' && payload.role !== 'analyst') {
     return NextResponse.redirect(new URL('/403', req.url));
   }
