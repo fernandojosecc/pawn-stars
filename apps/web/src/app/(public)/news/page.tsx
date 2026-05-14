@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Heading } from "@/components/typography/Heading"
 import { Body } from "@/components/typography/Body"
 import { NewsCard, NewsCategory } from "@pawn-stars/shared-types"
+import NewsletterSignupForm from "@/components/newsletter/NewsletterSignupForm"
 
 // Mock data for development - this would come from API in production
 const mockNews: NewsCard[] = [
@@ -315,23 +316,14 @@ export default function NewsPage() {
       {/* Newsletter Signup */}
       <section className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <Heading level="h2" className="mb-4">
+          <div className="max-w-xl mx-auto text-center">
+            <Heading level="h2" className="mb-3">
               Stay Updated
             </Heading>
             <Body size="base" className="text-primary-600 mb-6">
               Get the latest chess news delivered directly to your inbox.
             </Body>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-2 border border-primary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <Button className="w-full sm:w-auto">
-                Subscribe
-              </Button>
-            </div>
+            <NewsletterSignupForm compact className="max-w-md mx-auto" />
           </div>
         </div>
       </section>

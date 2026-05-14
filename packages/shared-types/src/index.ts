@@ -18,6 +18,7 @@ export * from './entities/application.types.js';
 export * from './entities/scouting.types.js';
 export * from './entities/live-coverage.types.js';
 export * from './entities/article-generation.types.js';
+export * from './entities/newsletter.types.js';
 
 // API types will be added later
 // export * from './api/request.types';

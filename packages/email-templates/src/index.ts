@@ -6,3 +6,6 @@ export type { RoundCompleteEmailProps, RoundResult, StandingRow } from './RoundC
 
 export { TrialStatusEmail, renderTrialStatusEmail } from './TrialStatusEmail.js';
 export type { TrialStatusEmailProps, TrialStatus } from './TrialStatusEmail.js';
+
+export { NewsletterEmail, renderNewsletterEmail } from './NewsletterEmail.js';
+export type { NewsletterEmailProps } from './NewsletterEmail.js';

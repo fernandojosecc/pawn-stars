@@ -20,6 +20,7 @@ import { BlogModule } from './blog/blog.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { LiveCoverageModule } from './live-coverage/live-coverage.module';
 import { ArticleGenerationModule } from './article-generation/article-generation.module';
+import { NewsletterModule } from './newsletter/newsletter.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ArticleGenerationModule } from './article-generation/article-generation
     NotificationsModule,
     LiveCoverageModule,
     ArticleGenerationModule,
+    NewsletterModule,
   ],
   controllers: [AppController],
   providers: [AppService],

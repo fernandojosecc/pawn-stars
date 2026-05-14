@@ -6,6 +6,7 @@ import { Heading } from '@/components/typography/Heading'
 import { Body } from '@/components/typography/Body'
 import type { BlogPostCard } from '@pawn-stars/shared-types'
 import { BlogCategory } from '@pawn-stars/shared-types'
+import NewsletterSignupForm from '@/components/newsletter/NewsletterSignupForm'
 
 // Mock data — replace with API call when backend is connected
 const MOCK_POSTS: BlogPostCard[] = [
@@ -124,6 +125,23 @@ export default function BlogPage() {
               </div>
             </>
           )}
+        </div>
+      </section>
+
+      {/* Newsletter signup */}
+      <section className="py-14 bg-primary-900">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <p className="text-accent-400 text-xs font-semibold uppercase tracking-widest mb-3">Newsletter</p>
+          <h2 className="text-2xl font-bold text-white mb-2">Analysis in your inbox</h2>
+          <p className="text-primary-400 text-sm mb-8 max-w-md mx-auto">
+            New opening guides, player profiles and tactical puzzles — straight to your inbox every week.
+          </p>
+          <NewsletterSignupForm
+            compact
+            heading=""
+            subheading=""
+            className="max-w-sm mx-auto"
+          />
         </div>
       </section>
     </div>

@@ -46,6 +46,10 @@ export class EmailService {
     await this.dispatch(to, `Round ${props.roundNumber} Complete — ${props.tournamentName}`, html);
   }
 
+  async sendHtml(to: string[], subject: string, html: string): Promise<void> {
+    await this.dispatch(to, subject, html);
+  }
+
   async sendTrialStatus(to: string[], props: TrialStatusEmailProps): Promise<void> {
     const { renderTrialStatus } = await loadTemplates();
     const html = await renderTrialStatus(props);
