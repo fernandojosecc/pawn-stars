@@ -39,8 +39,9 @@ export function middleware(req: NextRequest) {
   const isAdminRoute = pathname.startsWith('/admin');
   const isPortalRoute = pathname.startsWith('/portal');
   const isScoutingRoute = pathname.startsWith('/scouting');
+  const isSponsorPortalRoute = pathname.startsWith('/sponsor-portal');
 
-  if (!isAdminRoute && !isPortalRoute && !isScoutingRoute) {
+  if (!isAdminRoute && !isPortalRoute && !isScoutingRoute && !isSponsorPortalRoute) {
     return NextResponse.next();
   }
 
@@ -62,7 +63,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isAdminRoute && payload.role !== 'admin') {
+  if ((isAdminRoute || isSponsorPortalRoute) && payload.role !== 'admin') {
     return NextResponse.redirect(new URL('/403', req.url));
   }
 
@@ -78,5 +79,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/portal/:path*', '/scouting/:path*'],
+  matcher: ['/admin/:path*', '/portal/:path*', '/scouting/:path*', '/sponsor-portal/:path*'],
 };
