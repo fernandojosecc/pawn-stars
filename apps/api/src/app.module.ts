@@ -18,6 +18,7 @@ import { StatsModule } from './stats/stats.module';
 import { SeasonsModule } from './seasons/seasons.module';
 import { BlogModule } from './blog/blog.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { LiveCoverageModule } from './live-coverage/live-coverage.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     SeasonsModule,
     BlogModule,
     NotificationsModule,
+    LiveCoverageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
