@@ -19,6 +19,7 @@ import { SeasonsModule } from './seasons/seasons.module';
 import { BlogModule } from './blog/blog.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { LiveCoverageModule } from './live-coverage/live-coverage.module';
+import { ArticleGenerationModule } from './article-generation/article-generation.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { LiveCoverageModule } from './live-coverage/live-coverage.module';
     BlogModule,
     NotificationsModule,
     LiveCoverageModule,
+    ArticleGenerationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

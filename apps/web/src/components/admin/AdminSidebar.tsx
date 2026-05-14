@@ -12,6 +12,7 @@ import {
   Swords,
   Star,
   ScrollText,
+  Sparkles,
   Menu,
   X,
 } from 'lucide-react';
@@ -21,6 +22,7 @@ const navItems = [
   { href: '/admin/players', label: 'Players', icon: Users },
   { href: '/admin/tournaments', label: 'Tournaments', icon: Trophy },
   { href: '/admin/news', label: 'News', icon: Newspaper },
+  { href: '/admin/article-generator', label: 'AI Article Gen', icon: Sparkles },
   { href: '/admin/applications', label: 'Applications', icon: ClipboardList },
   { href: '/admin/matches', label: 'Matches', icon: Swords },
   { href: '/admin/sponsors', label: 'Sponsors', icon: Star },
