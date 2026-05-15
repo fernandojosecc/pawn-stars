@@ -55,6 +55,15 @@ RUN cd apps/api && npx prisma generate
 RUN pnpm --filter @pawn-stars/shared-types build \
  && pnpm --filter @pawn-stars/email-templates build
 
+# ── Debug: verify build output exists before copying ─────────────────────────
+RUN echo "=== shared-types contents ===" && \
+    ls -la packages/shared-types/ && \
+    echo "=== dist contents ===" && \
+    (ls -la packages/shared-types/dist/ 2>/dev/null || echo "NO DIST FOLDER") && \
+    echo "=== email-templates contents ===" && \
+    ls -la packages/email-templates/ && \
+    (ls -la packages/email-templates/dist/ 2>/dev/null || echo "NO DIST FOLDER")
+
 # ── Wire workspace packages into the API's node_modules ──────────────────────
 # Done after the workspace builds so dist/ exists. Copies only dist + package.json
 # so tsc and Node.js can resolve @pawn-stars/* without pnpm symlinks.
