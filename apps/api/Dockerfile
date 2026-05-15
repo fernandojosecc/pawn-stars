@@ -8,46 +8,64 @@
 FROM node:20-alpine AS base
 RUN corepack enable && corepack prepare pnpm@8.15.4 --activate
 
-# ─── Stage 1: Install all workspace dependencies ──────────────────────────────
+# ─── Stage 1: Populate the pnpm virtual store ─────────────────────────────────
 FROM base AS deps
 WORKDIR /app
 
-# Copy workspace manifests only — lets Docker cache this layer until lockfile changes
+# Copy workspace manifests only — layer is cached until the lockfile changes
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
-COPY packages/shared-types/package.json ./packages/shared-types/
+COPY packages/shared-types/package.json  ./packages/shared-types/
 COPY packages/email-templates/package.json ./packages/email-templates/
 COPY apps/api/package.json ./apps/api/
 
+# --ignore-scripts keeps this layer fast and safe; devDependencies are included
+# so the virtual store holds typescript and @nestjs/cli for the builder stage
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # ─── Stage 2: Build all packages ─────────────────────────────────────────────
 FROM base AS builder
 WORKDIR /app
 
-# Restore installed node_modules from deps stage
+# ── Copy workspace config ────────────────────────────────────────────────────
+# These files define the workspace structure pnpm needs before linking packages
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json tsconfig.base.json ./
+
+# ── Explicitly copy workspace package sources ────────────────────────────────
+# Do NOT use "COPY . ." — it would copy the host's node_modules into the image
+# and overwrite the pnpm virtual store with paths that only exist on the host.
+COPY packages/shared-types/  ./packages/shared-types/
+COPY packages/email-templates/ ./packages/email-templates/
+
+# ── Copy API source ──────────────────────────────────────────────────────────
+COPY apps/api/ ./apps/api/
+
+# ── Restore the pnpm virtual store from the deps stage ───────────────────────
+# Placed after source copy so pnpm sees the full workspace tree when it runs
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
 
-# Copy full source
-COPY . .
-
-# Install all deps including devDependencies (typescript, ts-node, etc.)
-# The deps stage uses --ignore-scripts for cache efficiency; this stage
-# needs the full install so tsc and nest-cli are available during build
+# Full install: establishes workspace symlinks (@pawn-stars/* → packages/*)
+# and makes devDependencies (tsc, @nestjs/cli) available for the build below
 RUN pnpm install --frozen-lockfile
 
-# Build dependency packages before the API (turbo topology: ^build)
+# ── Generate Prisma client ────────────────────────────────────────────────────
+# Must run before tsc so @prisma/client exports are available to TypeScript
+RUN cd apps/api && npx prisma generate
+
+# ── Build in dependency order ────────────────────────────────────────────────
+# Each package's dist/ must exist before the next one compiles against it
 RUN pnpm --filter @pawn-stars/shared-types build \
  && pnpm --filter @pawn-stars/email-templates build \
  && pnpm --filter @pawn-stars/api build
 
-# Create a self-contained production bundle:
-# pnpm deploy resolves workspace symlinks and includes only production deps
+# ── Create self-contained production bundle ───────────────────────────────────
+# pnpm deploy resolves workspace symlinks → real files, strips devDependencies
 RUN pnpm --filter @pawn-stars/api deploy --prod /app/deploy
 
-# Copy the compiled dist into the deployment bundle
-# (pnpm deploy copies source but not the compiled output)
+# Copy compiled dist (pnpm deploy carries source, not compiled output)
 RUN cp -r apps/api/dist /app/deploy/dist
+
+# Copy the generated Prisma query engine — pnpm deploy may not include .prisma/
+RUN cp -r node_modules/.prisma /app/deploy/node_modules/.prisma 2>/dev/null || true
 
 # ─── Stage 3: Lean production image ──────────────────────────────────────────
 FROM node:20-alpine AS production
