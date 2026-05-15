@@ -51,11 +51,20 @@ RUN pnpm install --frozen-lockfile
 # Must run before tsc so @prisma/client exports are available to TypeScript
 RUN cd apps/api && npx prisma generate
 
-# ── Build in dependency order ────────────────────────────────────────────────
-# Each package's dist/ must exist before the next one compiles against it
+# ── Build workspace packages ─────────────────────────────────────────────────
 RUN pnpm --filter @pawn-stars/shared-types build \
- && pnpm --filter @pawn-stars/email-templates build \
- && pnpm --filter @pawn-stars/api build
+ && pnpm --filter @pawn-stars/email-templates build
+
+# ── Wire workspace packages into the API's node_modules ──────────────────────
+# pnpm symlinks rely on the host's virtual store layout; copying the built
+# source directly guarantees Node.js and tsc can resolve @pawn-stars/* even
+# when symlinks are broken inside the container.
+RUN mkdir -p apps/api/node_modules/@pawn-stars && \
+    cp -r packages/shared-types   apps/api/node_modules/@pawn-stars/shared-types && \
+    cp -r packages/email-templates apps/api/node_modules/@pawn-stars/email-templates
+
+# ── Build the API ─────────────────────────────────────────────────────────────
+RUN pnpm --filter @pawn-stars/api build
 
 # ── Create self-contained production bundle ───────────────────────────────────
 # pnpm deploy resolves workspace symlinks → real files, strips devDependencies
