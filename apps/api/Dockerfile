@@ -18,7 +18,7 @@ COPY packages/shared-types/package.json ./packages/shared-types/
 COPY packages/email-templates/package.json ./packages/email-templates/
 COPY apps/api/package.json ./apps/api/
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # ─── Stage 2: Build all packages ─────────────────────────────────────────────
 FROM base AS builder
@@ -30,6 +30,11 @@ COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
 
 # Copy full source
 COPY . .
+
+# Install all deps including devDependencies (typescript, ts-node, etc.)
+# The deps stage uses --ignore-scripts for cache efficiency; this stage
+# needs the full install so tsc and nest-cli are available during build
+RUN pnpm install --frozen-lockfile
 
 # Build dependency packages before the API (turbo topology: ^build)
 RUN pnpm --filter @pawn-stars/shared-types build \
