@@ -56,17 +56,19 @@ RUN pnpm --filter @pawn-stars/shared-types build \
  && pnpm --filter @pawn-stars/email-templates build
 
 # ── Wire workspace packages into the API's node_modules ──────────────────────
-# pnpm symlinks rely on the host's virtual store layout; copying the built
-# source directly guarantees Node.js and tsc can resolve @pawn-stars/* even
-# when symlinks are broken inside the container.
-RUN mkdir -p apps/api/node_modules/@pawn-stars/shared-types \
-             apps/api/node_modules/@pawn-stars/email-templates && \
-    cp -r packages/shared-types/src packages/shared-types/dist \
-          packages/shared-types/package.json \
-          apps/api/node_modules/@pawn-stars/shared-types && \
-    cp -r packages/email-templates/src packages/email-templates/dist \
-          packages/email-templates/package.json \
-          apps/api/node_modules/@pawn-stars/email-templates
+# Done after the workspace builds so dist/ exists. Copies only dist + package.json
+# so tsc and Node.js can resolve @pawn-stars/* without pnpm symlinks.
+RUN mkdir -p \
+      apps/api/node_modules/@pawn-stars/shared-types \
+      apps/api/node_modules/@pawn-stars/email-templates && \
+    cp -r packages/shared-types/dist/. \
+          apps/api/node_modules/@pawn-stars/shared-types/ && \
+    cp    packages/shared-types/package.json \
+          apps/api/node_modules/@pawn-stars/shared-types/ && \
+    cp -r packages/email-templates/dist/. \
+          apps/api/node_modules/@pawn-stars/email-templates/ && \
+    cp    packages/email-templates/package.json \
+          apps/api/node_modules/@pawn-stars/email-templates/
 
 # ── Build the API ─────────────────────────────────────────────────────────────
 RUN pnpm --filter @pawn-stars/api build
