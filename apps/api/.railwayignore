@@ -1,0 +1,25 @@
+# Source and tests — only dist is needed at runtime
+src/
+test/
+
+# Local dependencies — Railway installs fresh from lockfile
+node_modules/
+
+# Environment files — set via Railway dashboard, never committed
+.env
+.env.*
+!.env.example
+
+# Development configuration
+nest-cli.json
+tsconfig*.json
+*.spec.ts
+jest.config.*
+
+# Prisma migrations are run separately via a Railway job
+# (comment this out if you want Railway to run migrations automatically)
+# prisma/migrations/
+
+# Editor / OS artifacts
+.DS_Store
+*.log
