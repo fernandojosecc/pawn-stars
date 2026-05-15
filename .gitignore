@@ -1,33 +1,95 @@
-# Dependencies
+# ─── Dependencies ────────────────────────────────────────────────────────────
 node_modules/
 .pnpm-store/
+.yarn/
 
-# Build outputs
+# ─── Build outputs ───────────────────────────────────────────────────────────
 dist/
-.next/
 build/
 out/
+.next/
+.output/
+*.tsbuildinfo
 
-# Environment files
-.env
-.env.local
-.env.staging
-.env.production
-
-# Turborepo
+# ─── Turborepo ───────────────────────────────────────────────────────────────
 .turbo/
 
-# IDE
+# ─── Environment files ───────────────────────────────────────────────────────
+.env
+.env.local
+.env.development
+.env.staging
+.env.production
+.env.test
+!.env.example
+!**/.env.example
+
+# ─── Prisma ──────────────────────────────────────────────────────────────────
+apps/api/prisma/generated/
+
+# ─── Testing & coverage ──────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+junit.xml
+test-results/
+
+# ─── Logs ────────────────────────────────────────────────────────────────────
+*.log
+logs/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ─── IDE / editors ───────────────────────────────────────────────────────────
 .vscode/
 .idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+.history/
 
-# OS
+# ─── OS ──────────────────────────────────────────────────────────────────────
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
 
-# Logs
-*.log
-npm-debug.log*
+# ─── Docker ──────────────────────────────────────────────────────────────────
+docker-compose.override.yml
 
-# Prisma
-prisma/generated/
+# ─── Vercel ──────────────────────────────────────────────────────────────────
+.vercel/
+
+# ─── Railway ─────────────────────────────────────────────────────────────────
+.railway/
+
+# ─── Sentry ──────────────────────────────────────────────────────────────────
+.sentryclirc
+
+# ─── Redis ───────────────────────────────────────────────────────────────────
+dump.rdb
+
+# ─── Uploads / generated media ───────────────────────────────────────────────
+uploads/
+public/uploads/
+
+# ─── Storybook ───────────────────────────────────────────────────────────────
+storybook-static/
+
+# ─── Payload CMS ─────────────────────────────────────────────────────────────
+apps/cms/media/
+apps/cms/.payload/
+
+# ─── Miscellaneous ───────────────────────────────────────────────────────────
+*.tgz
+*.gz
+*.zip
+.cache/
+tmp/
+temp/
