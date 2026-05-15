@@ -59,9 +59,14 @@ RUN pnpm --filter @pawn-stars/shared-types build \
 # pnpm symlinks rely on the host's virtual store layout; copying the built
 # source directly guarantees Node.js and tsc can resolve @pawn-stars/* even
 # when symlinks are broken inside the container.
-RUN mkdir -p apps/api/node_modules/@pawn-stars && \
-    cp -r packages/shared-types   apps/api/node_modules/@pawn-stars/shared-types && \
-    cp -r packages/email-templates apps/api/node_modules/@pawn-stars/email-templates
+RUN mkdir -p apps/api/node_modules/@pawn-stars/shared-types \
+             apps/api/node_modules/@pawn-stars/email-templates && \
+    cp -r packages/shared-types/src packages/shared-types/dist \
+          packages/shared-types/package.json \
+          apps/api/node_modules/@pawn-stars/shared-types && \
+    cp -r packages/email-templates/src packages/email-templates/dist \
+          packages/email-templates/package.json \
+          apps/api/node_modules/@pawn-stars/email-templates
 
 # ── Build the API ─────────────────────────────────────────────────────────────
 RUN pnpm --filter @pawn-stars/api build
