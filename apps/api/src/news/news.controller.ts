@@ -5,11 +5,16 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { NewsService, NewsCard, NewsDetail } from './news.service';
 import { NewsQueryDto } from './dto/news.dto';
+import { AuditService } from '../audit/audit.service';
+import { AuditAction } from '@pawn-stars/shared-types';
 
 @ApiTags('news')
 @Controller('news')
 export class NewsController {
-  constructor(private readonly newsService: NewsService) {}
+  constructor(
+    private readonly newsService: NewsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all news articles with filtering and pagination' })
@@ -86,7 +91,8 @@ export class NewsController {
   @Roles('admin', 'content_manager')
   @ApiOperation({ summary: 'Create a news article' })
   @ApiResponse({ status: 201, description: 'News article created successfully' })
-  async create(@Body() _body: Record<string, unknown>) {
+  async create(@Body() body: Record<string, unknown>) {
+    this.auditService.log({ entity: 'News', entityId: String(body['id'] ?? 'new'), action: AuditAction.CREATE, summary: `Created news article "${body['title'] ?? 'unknown'}"`, after: body });
     return { message: 'Not implemented' };
   }
 
@@ -96,7 +102,8 @@ export class NewsController {
   @ApiOperation({ summary: 'Update a news article' })
   @ApiParam({ name: 'id', description: 'News article ID' })
   @ApiResponse({ status: 200, description: 'News article updated successfully' })
-  async update(@Param('id', ParseUUIDPipe) _id: string, @Body() _body: Record<string, unknown>) {
+  async update(@Param('id', ParseUUIDPipe) id: string, @Body() body: Record<string, unknown>) {
+    this.auditService.log({ entity: 'News', entityId: id, action: AuditAction.UPDATE, summary: `Updated news article ${id}`, after: body });
     return { message: 'Not implemented' };
   }
 
@@ -106,7 +113,8 @@ export class NewsController {
   @ApiOperation({ summary: 'Delete a news article' })
   @ApiParam({ name: 'id', description: 'News article ID' })
   @ApiResponse({ status: 200, description: 'News article deleted successfully' })
-  async remove(@Param('id', ParseUUIDPipe) _id: string) {
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    this.auditService.log({ entity: 'News', entityId: id, action: AuditAction.DELETE, summary: `Deleted news article ${id}` });
     return { message: 'Not implemented' };
   }
 }

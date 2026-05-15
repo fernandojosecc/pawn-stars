@@ -21,6 +21,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { LiveCoverageModule } from './live-coverage/live-coverage.module';
 import { ArticleGenerationModule } from './article-generation/article-generation.module';
 import { NewsletterModule } from './newsletter/newsletter.module';
+import { AuditModule } from './audit/audit.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     LiveCoverageModule,
     ArticleGenerationModule,
     NewsletterModule,
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -5,11 +5,16 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { TournamentsService } from './tournaments.service';
 import { TournamentQueryDto } from './dto/tournament.dto';
+import { AuditService } from '../audit/audit.service';
+import { AuditAction } from '@pawn-stars/shared-types';
 
 @ApiTags('tournaments')
 @Controller('tournaments')
 export class TournamentsController {
-  constructor(private readonly tournamentsService: TournamentsService) {}
+  constructor(
+    private readonly tournamentsService: TournamentsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all tournaments with filtering and pagination' })
@@ -97,7 +102,8 @@ export class TournamentsController {
   @Roles('admin', 'content_manager')
   @ApiOperation({ summary: 'Create a new tournament' })
   @ApiResponse({ status: 201, description: 'Tournament created successfully' })
-  async create(@Body() _body: Record<string, unknown>) {
+  async create(@Body() body: Record<string, unknown>) {
+    this.auditService.log({ entity: 'Tournament', entityId: String(body['id'] ?? 'new'), action: AuditAction.CREATE, summary: `Created tournament "${body['name'] ?? 'unknown'}"`, after: body });
     return { message: 'Not implemented' };
   }
 
@@ -107,7 +113,8 @@ export class TournamentsController {
   @ApiOperation({ summary: 'Update a tournament' })
   @ApiParam({ name: 'id', description: 'Tournament ID' })
   @ApiResponse({ status: 200, description: 'Tournament updated successfully' })
-  async update(@Param('id', ParseUUIDPipe) _id: string, @Body() _body: Record<string, unknown>) {
+  async update(@Param('id', ParseUUIDPipe) id: string, @Body() body: Record<string, unknown>) {
+    this.auditService.log({ entity: 'Tournament', entityId: id, action: AuditAction.UPDATE, summary: `Updated tournament ${id}`, after: body });
     return { message: 'Not implemented' };
   }
 
@@ -117,7 +124,8 @@ export class TournamentsController {
   @ApiOperation({ summary: 'Delete a tournament' })
   @ApiParam({ name: 'id', description: 'Tournament ID' })
   @ApiResponse({ status: 200, description: 'Tournament deleted successfully' })
-  async remove(@Param('id', ParseUUIDPipe) _id: string) {
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    this.auditService.log({ entity: 'Tournament', entityId: id, action: AuditAction.DELETE, summary: `Deleted tournament ${id}` });
     return { message: 'Not implemented' };
   }
 }

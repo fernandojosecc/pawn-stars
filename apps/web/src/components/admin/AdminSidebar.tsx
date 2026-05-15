@@ -14,6 +14,7 @@ import {
   ScrollText,
   Sparkles,
   Mail,
+  Activity,
   Menu,
   X,
 } from 'lucide-react';
@@ -28,7 +29,8 @@ const navItems = [
   { href: '/admin/applications', label: 'Applications', icon: ClipboardList },
   { href: '/admin/matches', label: 'Matches', icon: Swords },
   { href: '/admin/sponsors', label: 'Sponsors', icon: Star },
-  { href: '/admin/audit-logs', label: 'Audit Logs', icon: ScrollText },
+  { href: '/admin/audit', label: 'Audit Logs', icon: ScrollText },
+  { href: '/admin/observability', label: 'Observability', icon: Activity },
 ];
 
 export default function AdminSidebar() {
