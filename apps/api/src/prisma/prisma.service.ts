@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaClient } from '@prisma/client'
+
+const { PrismaClient } = require('@prisma/client')
+type PrismaClient = InstanceType<typeof PrismaClient>
 
 @Injectable()
 export class PrismaService {
