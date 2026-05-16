@@ -93,6 +93,9 @@ RUN cp -r apps/api/dist /app/deploy/dist
 # Copy the generated Prisma query engine — pnpm deploy may not include .prisma/
 RUN cp -r node_modules/.prisma /app/deploy/node_modules/.prisma 2>/dev/null || true
 
+# ── Verify deploy bundle contains dist ───────────────────────────────────────
+RUN ls -la /app/deploy/ && ls -la /app/deploy/dist/ 2>/dev/null || echo "NO DIST IN DEPLOY"
+
 # ─── Stage 3: Lean production image ──────────────────────────────────────────
 FROM node:20-alpine AS production
 
