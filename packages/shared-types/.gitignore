@@ -1,0 +1,5 @@
+# Override root .gitignore so the compiled output is tracked in git.
+# Without this, Docker builds on CI (fresh clone) have no dist/ and tsc skips
+# emission when a stale tsconfig.tsbuildinfo is present in the build context.
+!dist
+!dist/**

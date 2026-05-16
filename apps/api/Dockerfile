@@ -52,6 +52,10 @@ RUN pnpm install --frozen-lockfile
 RUN cd apps/api && npx prisma generate
 
 # ── Build workspace packages ─────────────────────────────────────────────────
+# Delete stale .tsbuildinfo files so tsc performs a full rebuild.
+# Without this, a .tsbuildinfo copied from the build context tells TypeScript
+# the output is up-to-date and it skips emission — leaving dist/ absent.
+RUN find . -name "*.tsbuildinfo" -delete
 RUN pnpm --filter @pawn-stars/shared-types build \
  && pnpm --filter @pawn-stars/email-templates build
 
