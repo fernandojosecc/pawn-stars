@@ -21,6 +21,10 @@ RUN cd apps/api && npx prisma generate
 RUN pnpm --filter @pawn-stars/shared-types build
 RUN pnpm --filter @pawn-stars/email-templates build
 RUN pnpm --filter @pawn-stars/api build
+RUN echo "=== /app/apps/api/dist ===" && \
+  ls -la /app/apps/api/dist/ 2>&1 || echo "NO DIST" && \
+  echo "=== /app/apps/api/dist/main.js ===" && \
+  ls -la /app/apps/api/dist/main.js 2>&1 || echo "NO MAIN.JS"
 
 FROM node:20-alpine AS production
 RUN addgroup -S nodejs -g 1001 && adduser -S nestjs -u 1001 -G nodejs
