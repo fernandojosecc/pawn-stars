@@ -59,19 +59,16 @@ RUN find . -name "*.tsbuildinfo" -delete
 RUN pnpm --filter @pawn-stars/shared-types build \
  && pnpm --filter @pawn-stars/email-templates build
 
-# ── Debug: verify build output exists before copying ─────────────────────────
-RUN echo "=== shared-types contents ===" && \
-    ls -la packages/shared-types/ && \
-    echo "=== dist contents ===" && \
-    (ls -la packages/shared-types/dist/ 2>/dev/null || echo "NO DIST FOLDER") && \
-    echo "=== email-templates contents ===" && \
-    ls -la packages/email-templates/ && \
-    (ls -la packages/email-templates/dist/ 2>/dev/null || echo "NO DIST FOLDER")
-
 # ── Wire workspace packages into the API's node_modules ──────────────────────
 # Done after the workspace builds so dist/ exists. Copies only dist + package.json
 # so tsc and Node.js can resolve @pawn-stars/* without pnpm symlinks.
-RUN mkdir -p \
+# pnpm creates symlinks at apps/api/node_modules/@pawn-stars/* → packages/*,
+# so rm -rf removes them first; mkdir then creates real directories and cp has
+# no conflict.
+RUN rm -rf \
+      apps/api/node_modules/@pawn-stars/shared-types \
+      apps/api/node_modules/@pawn-stars/email-templates && \
+    mkdir -p \
       apps/api/node_modules/@pawn-stars/shared-types \
       apps/api/node_modules/@pawn-stars/email-templates && \
     cp -r packages/shared-types/dist/. \
