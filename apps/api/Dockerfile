@@ -1,122 +1,37 @@
-# ─────────────────────────────────────────────────────────────────────────────
-# Multi-stage production build for the NestJS API
-# Build context: monorepo root (required for workspace packages)
-#   docker build -f apps/api/Dockerfile -t pawn-stars-api .
-# ─────────────────────────────────────────────────────────────────────────────
-
-# ─── Base: Node 20 Alpine with pnpm ──────────────────────────────────────────
 FROM node:20-alpine AS base
 RUN corepack enable && corepack prepare pnpm@8.15.4 --activate
 
-# ─── Stage 1: Populate the pnpm virtual store ─────────────────────────────────
 FROM base AS deps
 WORKDIR /app
-
-# Copy workspace manifests only — layer is cached until the lockfile changes
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
-COPY packages/shared-types/package.json  ./packages/shared-types/
+COPY packages/shared-types/package.json ./packages/shared-types/
 COPY packages/email-templates/package.json ./packages/email-templates/
 COPY apps/api/package.json ./apps/api/
-
-# --ignore-scripts keeps this layer fast and safe; devDependencies are included
-# so the virtual store holds typescript and @nestjs/cli for the builder stage
-RUN pnpm install --frozen-lockfile --ignore-scripts
-
-# ─── Stage 2: Build all packages ─────────────────────────────────────────────
-FROM base AS builder
-WORKDIR /app
-
-# ── Copy workspace config ────────────────────────────────────────────────────
-# These files define the workspace structure pnpm needs before linking packages
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json tsconfig.base.json ./
-
-# ── Explicitly copy workspace package sources ────────────────────────────────
-# Do NOT use "COPY . ." — it would copy the host's node_modules into the image
-# and overwrite the pnpm virtual store with paths that only exist on the host.
-COPY packages/shared-types/  ./packages/shared-types/
-COPY packages/email-templates/ ./packages/email-templates/
-
-# ── Copy API source ──────────────────────────────────────────────────────────
-COPY apps/api/ ./apps/api/
-
-# ── Restore the pnpm virtual store from the deps stage ───────────────────────
-# Placed after source copy so pnpm sees the full workspace tree when it runs
-COPY --from=deps /app/node_modules ./node_modules
-
-# Full install: establishes workspace symlinks (@pawn-stars/* → packages/*)
-# and makes devDependencies (tsc, @nestjs/cli) available for the build below
 RUN pnpm install --frozen-lockfile
 
-# ── Generate Prisma client ────────────────────────────────────────────────────
-# Must run before tsc so @prisma/client exports are available to TypeScript
-RUN cd apps/api && npx prisma generate
-
-# ── Build workspace packages ─────────────────────────────────────────────────
-# Delete stale .tsbuildinfo files so tsc performs a full rebuild.
-# Without this, a .tsbuildinfo copied from the build context tells TypeScript
-# the output is up-to-date and it skips emission — leaving dist/ absent.
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/packages/shared-types/node_modules ./packages/shared-types/node_modules
+COPY --from=deps /app/packages/email-templates/node_modules ./packages/email-templates/node_modules
+COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
+COPY . .
 RUN find . -name "*.tsbuildinfo" -delete
-RUN pnpm --filter @pawn-stars/shared-types build \
- && pnpm --filter @pawn-stars/email-templates build
-
-# ── Wire workspace packages into the API's node_modules ──────────────────────
-# Done after the workspace builds so dist/ exists. Copies only dist + package.json
-# so tsc and Node.js can resolve @pawn-stars/* without pnpm symlinks.
-# pnpm creates symlinks at apps/api/node_modules/@pawn-stars/* → packages/*,
-# so rm -rf removes them first; mkdir then creates real directories and cp has
-# no conflict.
-RUN rm -rf \
-      apps/api/node_modules/@pawn-stars/shared-types \
-      apps/api/node_modules/@pawn-stars/email-templates && \
-    mkdir -p \
-      apps/api/node_modules/@pawn-stars/shared-types \
-      apps/api/node_modules/@pawn-stars/email-templates && \
-    cp -r packages/shared-types/dist/. \
-          apps/api/node_modules/@pawn-stars/shared-types/ && \
-    cp    packages/shared-types/package.json \
-          apps/api/node_modules/@pawn-stars/shared-types/ && \
-    cp -r packages/email-templates/dist/. \
-          apps/api/node_modules/@pawn-stars/email-templates/ && \
-    cp    packages/email-templates/package.json \
-          apps/api/node_modules/@pawn-stars/email-templates/
-
-# ── Build the API ─────────────────────────────────────────────────────────────
+RUN cd apps/api && npx prisma generate
+RUN pnpm --filter @pawn-stars/shared-types build
+RUN pnpm --filter @pawn-stars/email-templates build
 RUN pnpm --filter @pawn-stars/api build
 
-# ── Create self-contained production bundle ───────────────────────────────────
-# pnpm deploy resolves workspace symlinks → real files, strips devDependencies
-RUN pnpm --filter @pawn-stars/api deploy --prod /app/deploy
-
-# Copy compiled dist (pnpm deploy carries source, not compiled output)
-RUN cp -r apps/api/dist /app/deploy/dist
-
-# Copy the generated Prisma query engine — pnpm deploy may not include .prisma/
-RUN cp -r node_modules/.prisma /app/deploy/node_modules/.prisma 2>/dev/null || true
-
-# ── Verify deploy bundle contains dist ───────────────────────────────────────
-RUN ls -la /app/deploy/ && ls -la /app/deploy/dist/ 2>/dev/null || echo "NO DIST IN DEPLOY"
-
-# ─── Stage 3: Lean production image ──────────────────────────────────────────
 FROM node:20-alpine AS production
-
-# Create a non-root user
-RUN addgroup -S nodejs -g 1001 \
- && adduser -S nestjs -u 1001 -G nodejs
-
+RUN addgroup -S nodejs -g 1001 && adduser -S nestjs -u 1001 -G nodejs
 WORKDIR /app
-
-ENV NODE_ENV=production
-ENV PORT=3001
-
-# Copy only the standalone deployment bundle — no dev deps, no source, no symlinks
-COPY --from=builder --chown=nestjs:nodejs /app/deploy .
-
+COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nestjs:nodejs /app/packages ./packages
+COPY --from=builder --chown=nestjs:nodejs /app/apps/api/dist ./dist
+COPY --from=builder --chown=nestjs:nodejs /app/apps/api/package.json ./package.json
+COPY --from=builder --chown=nestjs:nodejs /app/apps/api/prisma ./prisma
 USER nestjs
-
 EXPOSE 3001
-
-# Docker-level health check (Railway also probes /health via HTTP)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s \
   CMD wget -qO- http://localhost:3001/health || exit 1
-
 CMD ["node", "dist/main.js"]
