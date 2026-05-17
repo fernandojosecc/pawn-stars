@@ -28,46 +28,47 @@ export class MeilisearchService implements OnModuleInit, OnModuleDestroy {
 
     this.client = new Meilisearch({ host, apiKey });
 
-    // Create players index if it doesn't exist
     try {
-      await this.client.getIndex(this.playersIndex);
-    } catch (error) {
-      // Index doesn't exist, create it
-      await this.client.createIndex(this.playersIndex, {
-        uid: this.playersIndex,
-        primaryKey: 'id',
-      });
-    }
+      try {
+        await this.client.getIndex(this.playersIndex);
+      } catch {
+        await this.client.createIndex(this.playersIndex, {
+          uid: this.playersIndex,
+          primaryKey: 'id',
+        });
+      }
 
-    // Configure searchable attributes and ranking rules
-    await this.client.index(this.playersIndex).updateSettings({
-      searchableAttributes: ['firstName', 'lastName', 'nationality', 'lichessHandle'],
-      filterableAttributes: ['title', 'nationality', 'active', 'currentRating'],
-      sortableAttributes: ['currentRating', 'lastName', 'firstName'],
-      rankingRules: [
-        'words',
-        'typo',
-        'proximity',
-        'attribute',
-        'sort',
-        'exactness',
-      ],
-      pagination: {
-        maxTotalHits: 1000,
-      },
-      displayedAttributes: [
-        'id',
-        'slug',
-        'firstName',
-        'lastName',
-        'nationality',
-        'photoUrl',
-        'title',
-        'currentRating',
-        'active',
-        'lichessHandle',
-      ],
-    });
+      await this.client.index(this.playersIndex).updateSettings({
+        searchableAttributes: ['firstName', 'lastName', 'nationality', 'lichessHandle'],
+        filterableAttributes: ['title', 'nationality', 'active', 'currentRating'],
+        sortableAttributes: ['currentRating', 'lastName', 'firstName'],
+        rankingRules: [
+          'words',
+          'typo',
+          'proximity',
+          'attribute',
+          'sort',
+          'exactness',
+        ],
+        pagination: {
+          maxTotalHits: 1000,
+        },
+        displayedAttributes: [
+          'id',
+          'slug',
+          'firstName',
+          'lastName',
+          'nationality',
+          'photoUrl',
+          'title',
+          'currentRating',
+          'active',
+          'lichessHandle',
+        ],
+      });
+    } catch (error) {
+      console.warn('Meilisearch unavailable — search features disabled:', (error as Error).message);
+    }
   }
 
   async onModuleDestroy() {
@@ -80,8 +81,7 @@ export class MeilisearchService implements OnModuleInit, OnModuleDestroy {
         primaryKey: 'id',
       });
     } catch (error) {
-      console.error('Error indexing player:', error);
-      throw error;
+      console.warn('Meilisearch: error indexing player:', (error as Error).message);
     }
   }
 
@@ -91,8 +91,7 @@ export class MeilisearchService implements OnModuleInit, OnModuleDestroy {
         primaryKey: 'id',
       });
     } catch (error) {
-      console.error('Error indexing players:', error);
-      throw error;
+      console.warn('Meilisearch: error indexing players:', (error as Error).message);
     }
   }
 
@@ -102,8 +101,7 @@ export class MeilisearchService implements OnModuleInit, OnModuleDestroy {
         primaryKey: 'id',
       });
     } catch (error) {
-      console.error('Error updating player:', error);
-      throw error;
+      console.warn('Meilisearch: error updating player:', (error as Error).message);
     }
   }
 
@@ -111,8 +109,7 @@ export class MeilisearchService implements OnModuleInit, OnModuleDestroy {
     try {
       await this.client.index(this.playersIndex).deleteDocument(playerId);
     } catch (error) {
-      console.error('Error deleting player:', error);
-      throw error;
+      console.warn('Meilisearch: error deleting player:', (error as Error).message);
     }
   }
 
@@ -131,7 +128,7 @@ export class MeilisearchService implements OnModuleInit, OnModuleDestroy {
       };
 
       const result = await this.client.index(this.playersIndex).search(query, searchParams);
-      
+
       return {
         hits: result.hits as PlayerDocument[],
         totalHits: result.estimatedTotalHits,
@@ -140,36 +137,28 @@ export class MeilisearchService implements OnModuleInit, OnModuleDestroy {
         processingTimeMs: result.processingTimeMs,
         query: result.query,
       };
-    } catch (error) {
-      console.error('Error searching players:', error);
-      throw error;
+    } catch {
+      return { hits: [], totalHits: 0, limit: options?.limit ?? 20, offset: options?.offset ?? 0, processingTimeMs: 0, query };
     }
   }
 
   async getPlayerStats() {
     try {
-      const stats = await this.client.index(this.playersIndex).getStats();
-      return stats;
-    } catch (error) {
-      console.error('Error getting player stats:', error);
-      throw error;
+      return await this.client.index(this.playersIndex).getStats();
+    } catch {
+      return null;
     }
   }
 
   async reindexAllPlayers(players: PlayerDocument[]) {
     try {
-      // Clear existing index
       await this.client.index(this.playersIndex).deleteAllDocuments();
-      
-      // Reindex all players
       await this.indexPlayers(players);
     } catch (error) {
-      console.error('Error reindexing all players:', error);
-      throw error;
+      console.warn('Meilisearch: error reindexing players:', (error as Error).message);
     }
   }
 
-  // Helper methods for building filters
   buildPlayerFilter(filters: {
     title?: string;
     nationality?: string;
@@ -213,7 +202,7 @@ export class MeilisearchService implements OnModuleInit, OnModuleDestroy {
       case 'name-desc':
         return 'lastName:desc,firstName:desc';
       default:
-        return 'currentRating:desc'; // Default: highest rating first
+        return 'currentRating:desc';
     }
   }
 }
