@@ -114,7 +114,7 @@ export const TeamPhilosophySection: React.FC<TeamPhilosophyProps> = ({
         {/* Call to action */}
         <div className="text-center mt-12">
           <Body size="base" className="text-primary-600 max-w-2xl mx-auto mb-6">
-            These values aren't just words on a page—they're the foundation of everything we do, 
+            These values aren&apos;t just words on a page—they&apos;re the foundation of everything we do,
             from training sessions to tournament preparation.
           </Body>
           <div className="text-2xl sm:text-3xl font-bold text-accent-600">

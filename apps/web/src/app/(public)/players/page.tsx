@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import { PlayerCardComponent } from "@/components/players/PlayerCard"
 import { FilterBar } from "@/components/players/FilterBar"
 import { Button } from "@/components/ui/button"
@@ -181,12 +181,9 @@ const mockPlayers: PlayerCard[] = [
 
 export default function PlayersPage() {
   const [players, setPlayers] = useState<PlayerCard[]>([])
-  const [filteredPlayers, setFilteredPlayers] = useState<PlayerCard[]>([])
   const [filters, setFilters] = useState<PlayerFilter>({})
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [totalPlayers, setTotalPlayers] = useState(0)
 
   const playersPerPage = 12
 
@@ -197,7 +194,6 @@ export default function PlayersPage() {
 
   const availableNationalities = [...new Set(mockPlayers.map(player => player.nationality))]
 
-  // Apply filters to players
   const applyFilters = (allPlayers: PlayerCard[], currentFilters: PlayerFilter) => {
     let filtered = [...allPlayers]
 
@@ -242,26 +238,17 @@ export default function PlayersPage() {
     return filtered
   }
 
+  const filteredPlayers = useMemo(() => applyFilters(players, filters), [players, filters])
+  const totalPlayers = filteredPlayers.length
+  const totalPages = Math.ceil(filteredPlayers.length / playersPerPage) || 1
+
   // Load initial data
   useEffect(() => {
-    // Simulate API call
     setTimeout(() => {
       setPlayers(mockPlayers)
-      setFilteredPlayers(mockPlayers)
-      setTotalPlayers(mockPlayers.length)
-      setTotalPages(Math.ceil(mockPlayers.length / playersPerPage))
       setIsLoading(false)
     }, 500)
   }, [])
-
-  // Apply filters when they change
-  useEffect(() => {
-    const filtered = applyFilters(players, filters)
-    setFilteredPlayers(filtered)
-    setTotalPlayers(filtered.length)
-    setTotalPages(Math.ceil(filtered.length / playersPerPage))
-    setCurrentPage(1) // Reset to first page when filters change
-  }, [filters, players])
 
   // Get current page players
   const getCurrentPagePlayers = () => {
@@ -272,10 +259,12 @@ export default function PlayersPage() {
 
   const handleFilterChange = (newFilters: PlayerFilter) => {
     setFilters(newFilters)
+    setCurrentPage(1)
   }
 
   const handleReset = () => {
     setFilters({})
+    setCurrentPage(1)
   }
 
   const handlePlayerClick = (player: PlayerCard) => {

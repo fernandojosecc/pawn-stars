@@ -3,6 +3,36 @@ import { Badge } from "@/components/ui/badge"
 import { Body } from "@/components/typography/Body"
 import { MatchPreview, MatchStatus } from "@pawn-stars/shared-types"
 
+const _now = Date.now()
+const DEFAULT_MATCHES: MatchPreview[] = [
+  {
+    id: "1",
+    date: new Date(_now + 2 * 60 * 60 * 1000),
+    venue: "Chess Club Downtown",
+    status: "UPCOMING",
+    homeTeam: { id: "team1", name: "Pawn Stars A", shortName: "PSA", logoUrl: "/teams/psa.png" },
+    awayTeam: { id: "team2", name: "Knight Raiders", shortName: "KR", logoUrl: "/teams/kr.png" },
+  },
+  {
+    id: "2",
+    date: new Date(_now - 30 * 60 * 1000),
+    venue: "Tournament Hall",
+    status: "LIVE",
+    homeTeam: { id: "team3", name: "Pawn Stars B", shortName: "PSB", logoUrl: "/teams/psb.png" },
+    awayTeam: { id: "team4", name: "Bishop Brigade", shortName: "BB", logoUrl: "/teams/bb.png" },
+    homeScore: 2.5,
+    awayScore: 1.5,
+  },
+  {
+    id: "3",
+    date: new Date(_now + 24 * 60 * 60 * 1000),
+    venue: "Community Center",
+    status: "UPCOMING",
+    homeTeam: { id: "team5", name: "Pawn Stars C", shortName: "PSC", logoUrl: "/teams/psc.png" },
+    awayTeam: { id: "team6", name: "Rook Rebels", shortName: "RR", logoUrl: "/teams/rr.png" },
+  },
+]
+
 interface MatchBarProps {
   matches?: MatchPreview[]
   showLive?: boolean
@@ -14,67 +44,7 @@ export const MatchBar: React.FC<MatchBarProps> = ({
   showLive = true, 
   maxMatches = 3 
 }) => {
-  // Mock data for development
-  const mockMatches: MatchPreview[] = [
-    {
-      id: "1",
-      date: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from now
-      venue: "Chess Club Downtown",
-      status: "UPCOMING",
-      homeTeam: {
-        id: "team1",
-        name: "Pawn Stars A",
-        shortName: "PSA",
-        logoUrl:"/teams/psa.png"
-      },
-      awayTeam: {
-        id: "team2", 
-        name: "Knight Raiders",
-        shortName: "KR",
-        logoUrl:"/teams/kr.png"
-      }
-    },
-    {
-      id: "2",
-      date: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago (live)
-      venue: "Tournament Hall",
-      status: "LIVE",
-      homeTeam: {
-        id: "team3",
-        name: "Pawn Stars B",
-        shortName: "PSB", 
-        logoUrl:"/teams/psb.png"
-      },
-      awayTeam: {
-        id: "team4",
-        name: "Bishop Brigade",
-        shortName: "BB",
-        logoUrl:"/teams/bb.png"
-      },
-      homeScore: 2.5,
-      awayScore: 1.5
-    },
-    {
-      id: "3",
-      date: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
-      venue: "Community Center",
-      status: "UPCOMING", 
-      homeTeam: {
-        id: "team5",
-        name: "Pawn Stars C",
-        shortName: "PSC",
-        logoUrl:"/teams/psc.png"
-      },
-      awayTeam: {
-        id: "team6",
-        name: "Rook Rebels",
-        shortName: "RR",
-        logoUrl:"/teams/rr.png"
-      }
-    }
-  ]
-
-  const displayMatches = matches.length > 0 ? matches : mockMatches
+  const displayMatches = matches.length > 0 ? matches : DEFAULT_MATCHES
   const filteredMatches = displayMatches
     .slice(0, maxMatches)
     .filter(match => showLive || match.status !== "LIVE")

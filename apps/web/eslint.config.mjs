@@ -13,6 +13,12 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      "@next/next/no-img-element": "warn",
+      "react/display-name": "warn",
+    },
+  },
 ]);
 
 export default eslintConfig;

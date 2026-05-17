@@ -1,17 +1,33 @@
 "use client"
 
 import React, { useState } from "react"
-import { ContactForm, ContactSubject } from "@/components/contact/ContactForm"
+import Link from "next/link"
+import { ContactForm } from "@/components/contact/ContactForm"
 import { ContactInfoBlocks } from "@/components/contact/ContactInfoBlocks"
 import { Heading } from "@/components/typography/Heading"
 import { Body } from "@/components/typography/Body"
 import { Button } from "@/components/ui/button"
 
+interface ContactFormData {
+  name: string
+  email: string
+  subject: string
+  message: string
+}
+
+interface ContactSubmissionResult {
+  name: string
+  email: string
+  subject: string
+  message?: string
+  submittedAt: string
+}
+
 export default function ContactPage() {
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [submissionData, setSubmissionData] = useState<any>(null)
+  const [submissionData, setSubmissionData] = useState<ContactSubmissionResult | null>(null)
 
-  const handleFormSubmit = async (formData: any) => {
+  const handleFormSubmit = async (formData: ContactFormData) => {
     try {
       // Simulate API call to contact endpoint
       const response = await fetch('/api/contact', {
@@ -53,7 +69,7 @@ export default function ContactPage() {
               Message Sent Successfully!
             </Heading>
             <Body size="lg" className="text-primary-600 mb-6">
-              Thank you for contacting Pawn Stars. We've received your message and will get back to you within 24-48 hours.
+              Thank you for contacting Pawn Stars. We&apos;ve received your message and will get back to you within 24-48 hours.
             </Body>
             <div className="bg-white p-6 rounded-lg border border-primary-200 max-w-md mx-auto">
               <div className="space-y-4">
@@ -87,9 +103,9 @@ export default function ContactPage() {
               <Button onClick={handleReset} variant="outline">
                 Send Another Message
               </Button>
-              <a href="/" className="text-accent-600 hover:text-accent-700 font-medium">
+              <Link href="/" className="text-accent-600 hover:text-accent-700 font-medium">
                 Back to Home
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -107,7 +123,7 @@ export default function ContactPage() {
               Contact Pawn Stars
             </Heading>
             <Body size="lg" className="text-primary-600 max-w-2xl mx-auto">
-              Have questions, media inquiries, or interested in joining our team? We'd love to hear from you!
+              Have questions, media inquiries, or interested in joining our team? We&apos;d love to hear from you!
             </Body>
           </div>
         </div>
@@ -124,7 +140,7 @@ export default function ContactPage() {
                   Send us a Message
                 </Heading>
                 <Body size="base" className="text-primary-600 mb-6">
-                  Fill out the form below and we'll get back to you as soon as possible.
+                  Fill out the form below and we&apos;ll get back to you as soon as possible.
                 </Body>
                 <ContactForm
                   onSubmit={handleFormSubmit}
@@ -159,7 +175,7 @@ export default function ContactPage() {
                 How can I join Pawn Stars?
               </Heading>
               <Body size="base" className="text-primary-600">
-                We offer trials for talented young players. Contact us through the "Player Trials" form or attend our open tryouts.
+                We offer trials for talented young players. Contact us through the &quot;Player Trials&quot; form or attend our open tryouts.
               </Body>
             </div>
             

@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { PlayerBioSection } from "@/components/player-detail/PlayerBio"
 import { RatingsHistorySection } from "@/components/player-detail/RatingsHistory"
 import { RecentFormSection } from "@/components/player-detail/RecentForm"
@@ -138,13 +139,13 @@ export default async function PlayerDetailPage({ params }: { params: Promise<{ s
       <div className="min-h-screen bg-primary-50 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-primary-900 mb-4">Player Not Found</h1>
-          <p className="text-primary-600 mb-4">The player you're looking for doesn't exist.</p>
-          <a 
-            href="/players" 
+          <p className="text-primary-600 mb-4">The player you&apos;re looking for doesn&apos;t exist.</p>
+          <Link
+            href="/players"
             className="text-accent-600 hover:text-accent-700 underline"
           >
             Back to Players
-          </a>
+          </Link>
         </div>
       </div>
     )
@@ -173,12 +174,12 @@ export default async function PlayerDetailPage({ params }: { params: Promise<{ s
       {/* Back to Players Link */}
       <section className="py-8 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <a 
-            href="/players" 
+          <Link
+            href="/players"
             className="inline-flex items-center gap-2 text-accent-600 hover:text-accent-700 font-medium"
           >
             ← Back to All Players
-          </a>
+          </Link>
         </div>
       </section>
     </div>

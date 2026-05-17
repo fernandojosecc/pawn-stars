@@ -179,8 +179,6 @@ export default function NewsPage() {
 
   // Filter news based on selected category
   useEffect(() => {
-    setIsLoading(true)
-    // Simulate API call delay
     const timeout = setTimeout(() => {
       if (selectedCategory === "ALL") {
         setFilteredNews(mockNews)

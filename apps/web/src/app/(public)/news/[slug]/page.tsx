@@ -1,4 +1,5 @@
 import React from "react"
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Heading } from "@/components/typography/Heading"
@@ -208,13 +209,13 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
       <div className="min-h-screen bg-primary-50 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-primary-900 mb-4">Article Not Found</h1>
-          <p className="text-primary-600 mb-4">The article you're looking for doesn't exist.</p>
-          <a 
-            href="/news" 
+          <p className="text-primary-600 mb-4">The article you&apos;re looking for doesn&apos;t exist.</p>
+          <Link
+            href="/news"
             className="text-accent-600 hover:text-accent-700 underline"
           >
             Back to News
-          </a>
+          </Link>
         </div>
       </div>
     )
@@ -274,12 +275,12 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
       <header className="bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center gap-4 mb-6">
-            <a 
-              href="/news" 
+            <Link
+              href="/news"
               className="text-accent-600 hover:text-accent-700 font-medium"
             >
               ← Back to News
-            </a>
+            </Link>
           </div>
 
           <div className="space-y-6">

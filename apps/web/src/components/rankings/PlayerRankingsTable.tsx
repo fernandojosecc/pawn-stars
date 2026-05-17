@@ -19,6 +19,31 @@ const MODALITIES: { label: string; value: RatingModality }[] = [
   { label: "Blitz", value: "blitz" },
 ]
 
+interface SortHeaderProps {
+  label: string
+  sortable?: SortKey
+  sortKey: SortKey
+  sortDir: SortDir
+  onToggle: (key: SortKey) => void
+}
+
+function SortHeader({ label, sortable, sortKey, sortDir, onToggle }: SortHeaderProps) {
+  const isActive = sortable && sortKey === sortable
+  return (
+    <th
+      className={`px-3 py-3 text-xs font-semibold uppercase tracking-wide text-center ${
+        sortable ? "cursor-pointer select-none hover:text-primary-700" : ""
+      } ${isActive ? "text-primary-900" : "text-primary-500"}`}
+      onClick={() => sortable && onToggle(sortable)}
+    >
+      <span className="flex items-center gap-1 justify-center">
+        {label}
+        {isActive && <span className="text-accent-500">{sortDir === "desc" ? "↓" : "↑"}</span>}
+      </span>
+    </th>
+  )
+}
+
 function RatingChangeBadge({ change }: { change: number }) {
   if (change === 0) return <span className="text-primary-400 text-xs font-mono">±0</span>
   if (change > 0) return <span className="text-success-600 text-xs font-mono font-semibold">+{change}</span>
@@ -62,23 +87,6 @@ export const PlayerRankingsTable: React.FC<PlayerRankingsTableProps> = ({ rankin
     }
   }
 
-  function SortHeader({ label, sortable }: { label: string; sortable?: SortKey }) {
-    const isActive = sortable && sortKey === sortable
-    return (
-      <th
-        className={`px-3 py-3 text-xs font-semibold uppercase tracking-wide text-center ${
-          sortable ? "cursor-pointer select-none hover:text-primary-700" : ""
-        } ${isActive ? "text-primary-900" : "text-primary-500"}`}
-        onClick={() => sortable && toggleSort(sortable)}
-      >
-        <span className="flex items-center gap-1 justify-center">
-          {label}
-          {isActive && <span className="text-accent-500">{sortDir === "desc" ? "↓" : "↑"}</span>}
-        </span>
-      </th>
-    )
-  }
-
   return (
     <div className="space-y-4">
       {/* Modality filter */}
@@ -103,11 +111,11 @@ export const PlayerRankingsTable: React.FC<PlayerRankingsTableProps> = ({ rankin
               <tr className="bg-primary-50 border-b border-primary-200">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-primary-500 uppercase tracking-wide w-10">#</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-primary-500 uppercase tracking-wide">Player</th>
-                <SortHeader label="Rating" sortable="rating" />
+                <SortHeader label="Rating" sortable="rating" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
                 <th className="text-center px-3 py-3 text-xs font-semibold text-primary-500 uppercase tracking-wide">Δ</th>
-                <SortHeader label="Games" sortable="gamesPlayed" />
+                <SortHeader label="Games" sortable="gamesPlayed" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
                 <th className="text-center px-3 py-3 text-xs font-semibold text-primary-500 uppercase tracking-wide">W/D/L</th>
-                <SortHeader label="Win %" sortable="winRate" />
+                <SortHeader label="Win %" sortable="winRate" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
               </tr>
             </thead>
             <tbody className="divide-y divide-primary-50">

@@ -141,8 +141,6 @@ export default function TournamentsPage() {
 
   // Filter tournaments based on selected status
   useEffect(() => {
-    setIsLoading(true)
-    // Simulate API call delay
     const timeout = setTimeout(() => {
       if (selectedStatus === "ALL") {
         setFilteredTournaments(mockTournaments)

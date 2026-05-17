@@ -6,6 +6,49 @@ import { Heading } from "@/components/typography/Heading"
 import { Body } from "@/components/typography/Body"
 import { NewsCard } from "@pawn-stars/shared-types"
 
+const _now = Date.now()
+const DEFAULT_NEWS: NewsCard[] = [
+  {
+    id: "1",
+    slug: "pawn-stars-win-national-championship",
+    title: "Pawn Stars A Team Claims National Championship Title",
+    excerpt: "In a stunning display of strategic brilliance, our A team secured first place in the National Chess Championship.",
+    category: "MATCH_REPORTS" as const,
+    author: "Chess News Network",
+    publishedAt: new Date(_now - 2 * 24 * 60 * 60 * 1000),
+    coverImage: "/news/championship-win.jpg",
+    readTime: 5,
+    featured: true,
+    tags: "tournament, championship, team",
+  },
+  {
+    id: "2",
+    slug: "magnus-carlsen-joins-training-camp",
+    title: "World Champion Magnus Carlsen Joins Training Camp",
+    excerpt: "Former World Champion Magnus Carlsen will be leading an exclusive training camp for our team members.",
+    category: "ANNOUNCEMENTS" as const,
+    author: "Team Management",
+    publishedAt: new Date(_now - 5 * 24 * 60 * 60 * 1000),
+    coverImage: "/news/carlsen-camp.jpg",
+    readTime: 3,
+    featured: false,
+    tags: "training, guest, grandmaster",
+  },
+  {
+    id: "3",
+    slug: "new-sponsorship-announced",
+    title: "Major Sponsorship Deal Announced",
+    excerpt: "We're thrilled to announce a new partnership with a leading tech company.",
+    category: "ANNOUNCEMENTS" as const,
+    author: "Business Development",
+    publishedAt: new Date(_now - 7 * 24 * 60 * 60 * 1000),
+    coverImage: "/news/sponsorship.jpg",
+    readTime: 4,
+    featured: false,
+    tags: "sponsorship, partnership, business",
+  },
+]
+
 interface RecentNewsProps {
   news?: NewsCard[]
   limit?: number
@@ -17,50 +60,7 @@ export const RecentNews: React.FC<RecentNewsProps> = ({
   limit = 3, 
   showCategory = true 
 }) => {
-  // Mock data for development
-  const mockNews: NewsCard[] = [
-    {
-      id: "1",
-      slug: "pawn-stars-win-national-championship",
-      title: "Pawn Stars A Team Claims National Championship Title",
-      excerpt: "In a stunning display of strategic brilliance, our A team secured first place in the National Chess Championship.",
-      category: "MATCH_REPORTS" as const,
-      author: "Chess News Network",
-      publishedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-      coverImage: "/news/championship-win.jpg",
-      readTime: 5,
-      featured: true,
-      tags: "tournament, championship, team"
-    },
-    {
-      id: "2", 
-      slug: "magnus-carlsen-joins-training-camp",
-      title: "World Champion Magnus Carlsen Joins Training Camp",
-      excerpt: "Former World Champion Magnus Carlsen will be leading an exclusive training camp for our team members.",
-      category: "ANNOUNCEMENTS" as const,
-      author: "Team Management",
-      publishedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-      coverImage: "/news/carlsen-camp.jpg",
-      readTime: 3,
-      featured: false,
-      tags: "training, guest, grandmaster"
-    },
-    {
-      id: "3",
-      slug: "new-sponsorship-announced",
-      title: "Major Sponsorship Deal Announced",
-      excerpt: "We're thrilled to announce a new partnership with a leading tech company.",
-      category: "ANNOUNCEMENTS" as const,
-      author: "Business Development",
-      publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      coverImage: "/news/sponsorship.jpg",
-      readTime: 4,
-      featured: false,
-      tags: "sponsorship, partnership, business"
-    }
-  ]
-
-  const displayNews = news.length > 0 ? news : mockNews
+  const displayNews = news.length > 0 ? news : DEFAULT_NEWS
   const recentNews = displayNews.slice(0, limit)
 
   const getCategoryColor = (category: string) => {
