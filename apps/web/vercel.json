@@ -4,10 +4,6 @@
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm --filter @pawn-stars/shared-types build && pnpm --filter @pawn-stars/email-templates build && pnpm --filter @pawn-stars/web build",
   "outputDirectory": ".next",
-  "env": {
-    "NEXT_PUBLIC_API_URL": "@pawn-stars-api-url",
-    "NEXT_PUBLIC_WS_URL": "@pawn-stars-ws-url"
-  },
   "headers": [
     {
       "source": "/(.*)",
