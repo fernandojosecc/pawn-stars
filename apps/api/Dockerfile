@@ -21,21 +21,19 @@ RUN cd apps/api && npx prisma generate
 RUN pnpm --filter @pawn-stars/shared-types build
 RUN pnpm --filter @pawn-stars/email-templates build
 RUN pnpm --filter @pawn-stars/api build
-RUN echo "=== /app/apps/api/dist ===" && \
-  ls -la /app/apps/api/dist/ 2>&1 || echo "NO DIST" && \
-  echo "=== /app/apps/api/dist/main.js ===" && \
-  ls -la /app/apps/api/dist/main.js 2>&1 || echo "NO MAIN.JS"
 
 FROM node:20-alpine AS production
 RUN addgroup -S nodejs -g 1001 && adduser -S nestjs -u 1001 -G nodejs
 WORKDIR /app
 COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nestjs:nodejs /app/packages ./packages
+COPY --from=builder --chown=nestjs:nodejs /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=builder --chown=nestjs:nodejs /app/apps/api/dist ./dist
 COPY --from=builder --chown=nestjs:nodejs /app/apps/api/package.json ./package.json
 COPY --from=builder --chown=nestjs:nodejs /app/apps/api/prisma ./prisma
+COPY --from=builder --chown=nestjs:nodejs /app/packages ./packages
 USER nestjs
 EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s \
   CMD wget -qO- http://localhost:3001/health || exit 1
+ENV NODE_PATH=/app/node_modules
 CMD ["node", "dist/main.js"]
