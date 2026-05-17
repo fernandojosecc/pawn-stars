@@ -24,16 +24,24 @@ RUN pnpm --filter @pawn-stars/api build
 
 FROM node:20-alpine AS production
 RUN addgroup -S nodejs -g 1001 && adduser -S nestjs -u 1001 -G nodejs
+RUN corepack enable && corepack prepare pnpm@8.15.4 --activate
 WORKDIR /app
-COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nestjs:nodejs /app/apps/api/node_modules ./apps/api/node_modules
-COPY --from=builder --chown=nestjs:nodejs /app/apps/api/dist ./dist
-COPY --from=builder --chown=nestjs:nodejs /app/apps/api/package.json ./package.json
-COPY --from=builder --chown=nestjs:nodejs /app/apps/api/prisma ./prisma
-COPY --from=builder --chown=nestjs:nodejs /app/packages ./packages
+
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY packages/shared-types/package.json ./packages/shared-types/
+COPY packages/email-templates/package.json ./packages/email-templates/
+COPY apps/api/package.json ./apps/api/
+
+RUN pnpm install --frozen-lockfile --prod
+
+COPY --from=builder --chown=nestjs:nodejs /app/packages/shared-types/dist ./packages/shared-types/dist
+COPY --from=builder --chown=nestjs:nodejs /app/packages/email-templates/dist ./packages/email-templates/dist
+COPY --from=builder --chown=nestjs:nodejs /app/apps/api/dist ./apps/api/dist
+COPY --from=builder --chown=nestjs:nodejs /app/apps/api/prisma ./apps/api/prisma
+
 USER nestjs
+WORKDIR /app/apps/api
 EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s \
   CMD wget -qO- http://localhost:3001/health || exit 1
-ENV NODE_PATH=/app/node_modules
 CMD ["node", "dist/main.js"]
