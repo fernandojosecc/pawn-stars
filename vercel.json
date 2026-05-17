@@ -1,3 +1,5 @@
 {
-  "installCommand": "npm install -g pnpm@8.15.4 && pnpm install --frozen-lockfile"
+  "framework": "nextjs",
+  "installCommand": "npm install -g pnpm@8.15.4 && pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm --filter @pawn-stars/web build"
 }
