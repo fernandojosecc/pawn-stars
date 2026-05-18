@@ -54,7 +54,12 @@ export default function RootLayout({
       lang="en"
       className={`${bebasNeue.variable} ${dmSans.variable} ${dmMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-carbon text-white">{children}</body>
+      <body
+        style={{ backgroundColor: '#0A0A08', color: '#F0EDE6' }}
+        className="min-h-full flex flex-col bg-carbon text-white"
+      >
+        {children}
+      </body>
     </html>
   );
 }
