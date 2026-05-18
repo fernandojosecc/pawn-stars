@@ -10,6 +10,36 @@ const config: Config = {
     extend: {
       // Pawn Stars brand colors
       colors: {
+        // Dark carbon backgrounds
+        carbon: {
+          DEFAULT: '#0A0A08',
+          50: '#1A1A18',
+          100: '#141412',
+          200: '#1E1E1C',
+          300: '#2A2A28',
+          400: '#3A3A38',
+          500: '#4A4A48',
+          600: '#6A6A68',
+          700: '#8A8A88',
+          800: '#AAAAAA',
+          900: '#CACAC8',
+          950: '#FAFAF8',
+        },
+        // Brand gold
+        gold: {
+          50: '#FBF5E8',
+          100: '#F5E9C8',
+          200: '#EDD494',
+          300: '#E4C06A',
+          400: '#D4B056',
+          DEFAULT: '#C9A84C',
+          500: '#C9A84C',
+          600: '#B8933A',
+          700: '#9A7A2E',
+          800: '#7C6124',
+          900: '#5E491B',
+          950: '#3A2D10',
+        },
         // Primary - Chess board inspired
         primary: {
           50: '#f8fafc',
@@ -90,9 +120,9 @@ const config: Config = {
       },
       // Custom typography
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-bebas-neue)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-dm-mono)', 'JetBrains Mono', 'monospace'],
       },
       // Custom spacing based on 8px grid
       spacing: {

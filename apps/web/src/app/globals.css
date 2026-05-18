@@ -1,13 +1,60 @@
 @import "tailwindcss";
 @config "../../tailwind.config.ts";
 
+/* Tailwind v4 native theme tokens — guarantees CSS vars are emitted in production build */
+@theme {
+  --color-carbon: #0A0A08;
+  --color-carbon-50: #1A1A18;
+  --color-carbon-100: #141412;
+  --color-carbon-200: #1E1E1C;
+  --color-carbon-300: #2A2A28;
+  --color-carbon-400: #3A3A38;
+  --color-carbon-500: #4A4A48;
+  --color-carbon-600: #6A6A68;
+  --color-carbon-700: #8A8A88;
+  --color-carbon-800: #AAAAAA;
+  --color-carbon-900: #CACAC8;
+  --color-carbon-950: #FAFAF8;
+
+  --color-gold: #C9A84C;
+  --color-gold-50: #FBF5E8;
+  --color-gold-100: #F5E9C8;
+  --color-gold-200: #EDD494;
+  --color-gold-300: #E4C06A;
+  --color-gold-400: #D4B056;
+  --color-gold-500: #C9A84C;
+  --color-gold-600: #B8933A;
+  --color-gold-700: #9A7A2E;
+  --color-gold-800: #7C6124;
+  --color-gold-900: #5E491B;
+  --color-gold-950: #3A2D10;
+
+  --font-family-display: var(--font-bebas-neue), system-ui, sans-serif;
+  --font-family-sans: var(--font-dm-sans), system-ui, sans-serif;
+  --font-family-mono: var(--font-dm-mono), "JetBrains Mono", monospace;
+}
+
+/* Force-include critical dark theme classes so Tailwind v4 never purges them */
+@source inline("bg-carbon bg-carbon-50 bg-carbon-100 bg-carbon-200 bg-carbon-300 bg-carbon-400 text-white text-gold border-gold border-carbon-300 font-display font-mono font-sans");
+
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #0A0A08;
+  --foreground: #F0EDE6;
+  --surface: #141412;
+  --surface-elevated: #1E1E1C;
+  --border: #2A2A28;
+  --gold: #C9A84C;
+  --gold-dim: #8A7030;
+  --muted: #6A6A68;
+}
+
+/* Explicit dark background — wins over Tailwind base via cascade order */
+html,
+body {
+  background-color: #0A0A08 !important;
+  color: #F0EDE6 !important;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Inter, system-ui, sans-serif;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
 }

@@ -1,9 +1,5 @@
 import React from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Heading } from "@/components/typography/Heading"
-import { Body } from "@/components/typography/Body"
+import Link from "next/link"
 import { PlayerCard, PlayerTitle } from "@pawn-stars/shared-types"
 
 interface FeaturedPlayersProps {
@@ -12,205 +8,172 @@ interface FeaturedPlayersProps {
   showRatings?: boolean
 }
 
-export const FeaturedPlayers: React.FC<FeaturedPlayersProps> = ({ 
-  players = [], 
-  count = 6, 
-  showRatings = true 
+const MOCK_PLAYERS: PlayerCard[] = [
+  {
+    id: "1",
+    slug: "andres-sanchez",
+    firstName: "Andrés",
+    lastName: "Sánchez",
+    nationality: "ESP",
+    title: "GM",
+    currentRating: 2541,
+    active: true,
+    rosterPosition: 1,
+    badge: "CAPTAIN",
+  },
+  {
+    id: "2",
+    slug: "nikolai-petrov",
+    firstName: "Nikolai",
+    lastName: "Petrov",
+    nationality: "RUS",
+    title: "GM",
+    currentRating: 2487,
+    active: true,
+    rosterPosition: 2,
+    badge: "TOP BOARD",
+  },
+  {
+    id: "3",
+    slug: "laila-fathi",
+    firstName: "Laila",
+    lastName: "Fathi",
+    nationality: "MAR",
+    title: "IM",
+    currentRating: 2312,
+    active: true,
+    rosterPosition: 3,
+    badge: null,
+  },
+  {
+    id: "4",
+    slug: "carlos-medina",
+    firstName: "Carlos",
+    lastName: "Medina",
+    nationality: "MEX",
+    title: "FM",
+    currentRating: 2278,
+    active: true,
+    rosterPosition: 4,
+    badge: null,
+  },
+]
+
+const FLAG_EMOJI: Record<string, string> = {
+  ESP: "🇪🇸", RUS: "🇷🇺", MAR: "🇲🇦", MEX: "🇲🇽",
+  NOR: "🇳🇴", CHN: "🇨🇳", USA: "🇺🇸", IND: "🇮🇳",
+  GER: "🇩🇪", FRA: "🇫🇷", ENG: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", ITA: "🇮🇹",
+}
+
+const COUNTRY_NAME: Record<string, string> = {
+  ESP: "Spain", RUS: "Russia", MAR: "Morocco", MEX: "Mexico",
+  NOR: "Norway", CHN: "China", USA: "United States", IND: "India",
+}
+
+const TITLE_LABEL: Partial<Record<NonNullable<PlayerTitle>, string>> = {
+  GM: "GRANDMASTER", IM: "INTL MASTER", FM: "FIDE MASTER",
+  CM: "CANDIDATE MASTER", WGM: "WOMAN GM", WIM: "WOMAN IM",
+  WFM: "WOMAN FM", WCM: "WOMAN CM",
+}
+
+const RATING_TYPE_LABEL: Partial<Record<NonNullable<PlayerTitle>, string>> & { default: string } = {
+  GM: "CLASSICAL ELO", IM: "RAPID ELO", FM: "BLITZ ELO", default: "CLASSICAL ELO",
+}
+
+const FORM_DOTS = ["bg-success-500", "bg-success-500", "bg-success-500", "bg-danger-500", "bg-carbon-400"]
+
+export const FeaturedPlayers: React.FC<FeaturedPlayersProps> = ({
+  players = [],
+  count = 4,
+  showRatings = true,
 }) => {
-  // Mock data for development
-  const mockPlayers: PlayerCard[] = [
-    {
-      id: "1",
-      slug: "magnus-carlsen",
-      firstName: "Magnus",
-      lastName: "Carlsen",
-      nationality: "NOR",
-      photoUrl: "/players/magnus.jpg",
-      title: "GM",
-      currentRating: 2830,
-      active: true
-    },
-    {
-      id: "2", 
-      slug: "hou-yifan",
-      firstName: "Hou",
-      lastName: "Yifan",
-      nationality: "CHN",
-      photoUrl: "/players/hou.jpg",
-      title: "GM",
-      currentRating: 2758,
-      active: true
-    },
-    {
-      id: "3",
-      slug: "fabiano-caruana", 
-      firstName: "Fabiano",
-      lastName: "Caruana",
-      nationality: "USA",
-      photoUrl: "/players/fabiano.jpg",
-      title: "GM",
-      currentRating: 2820,
-      active: true
-    },
-    {
-      id: "4",
-      slug: "ding-liren",
-      firstName: "Ding", 
-      lastName: "Liren",
-      nationality: "CHN",
-      photoUrl: "/players/ding.jpg",
-      title: "GM",
-      currentRating: 2791,
-      active: true
-    },
-    {
-      id: "5",
-      slug: "ian-nepomniachtchi",
-      firstName: "Ian",
-      lastName: "Nepomniachtchi",
-      nationality: "RUS",
-      photoUrl: "/players/ian.jpg", 
-      title: "GM",
-      currentRating: 2793,
-      active: true
-    },
-    {
-      id: "6",
-      slug: "levon-aronian",
-      firstName: "Levon",
-      lastName: "Aronian",
-      nationality: "USA", 
-      photoUrl: "/players/levon.jpg",
-      title: "GM",
-      currentRating: 2785,
-      active: true
-    }
-  ]
-
-  const displayPlayers = players.length > 0 ? players : mockPlayers
-  const featuredPlayers = displayPlayers.slice(0, count)
-
-  const getTitleColor = (title: PlayerTitle) => {
-    switch (title) {
-      case "GM":
-        return "bg-accent-500 text-white"
-      case "IM":
-        return "bg-primary-600 text-white"
-      case "FM":
-        return "bg-success-500 text-white"
-      case "WGM":
-        return "bg-accent-400 text-white"
-      case "WIM":
-        return "bg-primary-500 text-white"
-      default:
-        return "bg-primary-200 text-primary-800"
-    }
-  }
-
-  const getFlagEmoji = (nationality: string) => {
-    const flags: Record<string, string> = {
-      "NOR": "🇳🇴",
-      "CHN": "🇨🇳", 
-      "USA": "🇺🇸",
-      "RUS": "🇷🇺",
-      "IND": "🇮🇳",
-      "GER": "🇩🇪",
-      "FRA": "🇫🇷",
-      "ENG": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      "ESP": "🇪🇸",
-      "ITA": "🇮🇹"
-    }
-    return flags[nationality] || "🏳️"
-  }
+  const displayPlayers = players.length > 0 ? players : MOCK_PLAYERS
+  const featured = displayPlayers.slice(0, count)
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-14 bg-carbon">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
-        <div className="text-center mb-12">
-          <Heading level="h2" align="center" className="mb-4">
-            Featured Players
-          </Heading>
-          <Body size="lg" align="center" className="text-primary-600 max-w-2xl mx-auto">
-            Meet our talented roster of chess masters competing at the highest level
-          </Body>
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="font-display text-3xl sm:text-4xl tracking-wide">
+            <span className="text-white">FEATURED </span>
+            <span className="text-gold">PLAYERS</span>
+          </h2>
+          <Link
+            href="/players"
+            className="font-mono text-xs tracking-widest text-carbon-800 hover:text-white transition-colors"
+          >
+            View all →
+          </Link>
         </div>
 
-        {/* Players grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {featuredPlayers.map((player, index) => (
-            <Card 
-              key={player.id} 
-              className="group hover:shadow-trophy transition-all duration-300 hover:-translate-y-1"
-            >
-              <CardContent className="p-6">
-                {/* Player photo */}
-                <div className="relative mb-4">
-                  <div className="aspect-square w-full max-w-[200px] mx-auto bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg overflow-hidden">
-                    {player.photoUrl ? (
-                      <img
-                        src={player.photoUrl}
-                        alt={`${player.firstName} ${player.lastName}`}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="text-4xl text-primary-400">
-                          {player.firstName[0]}{player.lastName[0]}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Title badge */}
-                  {player.title && (
-                    <div className="absolute top-2 right-2">
-                      <Badge className={getTitleColor(player.title)}>
-                        {player.title}
-                      </Badge>
-                    </div>
+        {/* Player cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {featured.map((player) => {
+            const initials = `${player.firstName[0]}${player.lastName[0]}`
+            const flag = FLAG_EMOJI[player.nationality] ?? "🏳️"
+            const country = COUNTRY_NAME[player.nationality] ?? player.nationality
+            const ratingLabel = (player.title ? (RATING_TYPE_LABEL[player.title] ?? RATING_TYPE_LABEL.default) : RATING_TYPE_LABEL.default)
+
+            return (
+              <Link
+                key={player.id}
+                href={`/players/${player.slug}`}
+                className="block bg-carbon-100 border border-carbon-300 hover:border-gold/50 transition-colors p-5"
+              >
+                {/* Top row: roster position + badge */}
+                <div className="flex items-center justify-between mb-4">
+                  <span className="font-mono text-[10px] tracking-widest text-carbon-700">
+                    #{player.rosterPosition} ROSTER
+                  </span>
+                  {player.badge && (
+                    <span className="border border-gold font-mono text-[9px] tracking-widest text-gold px-2 py-0.5">
+                      {player.badge}
+                    </span>
                   )}
                 </div>
 
-                {/* Player info */}
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <span className="text-lg">{getFlagEmoji(player.nationality)}</span>
-                    <h3 className="text-xl font-bold text-primary-900 group-hover:text-accent-600 transition-colors">
-                      {player.firstName} {player.lastName}
-                    </h3>
-                  </div>
-                  
-                  {showRatings && player.currentRating && (
-                    <div className="mb-3">
-                      <div className="text-2xl font-bold text-accent-600">
-                        {player.currentRating}
-                      </div>
-                      <div className="text-xs text-primary-500 font-medium">
-                        FIDE Rating
-                      </div>
-                    </div>
+                {/* Avatar */}
+                <div className="w-14 h-14 rounded-full bg-carbon-300 border border-carbon-400 flex items-center justify-center mb-4">
+                  {player.photoUrl ? (
+                    <img
+                      src={player.photoUrl}
+                      alt={`${player.firstName} ${player.lastName}`}
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="font-display text-xl text-carbon-900">{initials}</span>
                   )}
-
-                  <div className="flex items-center justify-center gap-2 text-sm text-primary-600 mb-4">
-                    <span>{player.nationality}</span>
-                    {player.active && (
-                      <Badge variant="success" className="text-xs">
-                        Active
-                      </Badge>
-                    )}
-                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
 
-        {/* Call to action */}
-        <div className="text-center">
-          <Button variant="outline" size="lg">
-            View Full Roster
-          </Button>
+                {/* Name */}
+                <div className="font-sans font-semibold text-white text-sm mb-1">
+                  {player.firstName} {player.lastName}
+                </div>
+
+                {/* Country */}
+                <div className="flex items-center gap-1.5 mb-3">
+                  <span className="text-xs">{flag}</span>
+                  <span className="font-mono text-[10px] tracking-wide text-carbon-800">{country}</span>
+                </div>
+
+                {/* Rating */}
+                {showRatings && player.currentRating && (
+                  <div className="mb-3">
+                    <div className="font-display text-3xl text-gold leading-none">{player.currentRating}</div>
+                    <div className="font-mono text-[10px] tracking-widest text-carbon-700 mt-0.5">{ratingLabel}</div>
+                  </div>
+                )}
+
+                {/* Form dots */}
+                <div className="flex items-center gap-1">
+                  {FORM_DOTS.map((color, i) => (
+                    <span key={i} className={`inline-block w-3 h-1.5 ${color}`} />
+                  ))}
+                </div>
+              </Link>
+            )
+          })}
         </div>
       </div>
     </section>

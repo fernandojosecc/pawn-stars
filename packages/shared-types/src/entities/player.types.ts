@@ -38,6 +38,8 @@ export interface PlayerCard {
   title?: PlayerTitle;
   currentRating?: number;
   active: boolean;
+  rosterPosition?: number;
+  badge?: string | null;
 }
 
 export interface PlayerFilter {

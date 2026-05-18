@@ -2,6 +2,9 @@ import { HeroSection } from "@/components/home/HeroSection"
 import { MatchBar } from "@/components/home/MatchBar"
 import { FeaturedPlayers } from "@/components/home/FeaturedPlayers"
 import { RecentNews } from "@/components/home/RecentNews"
+import { TeamRankings } from "@/components/home/TeamRankings"
+import { SiteHeader } from "@/components/layout/SiteHeader"
+import { SiteFooter } from "@/components/layout/SiteFooter"
 import { organizationSchema } from "@/lib/structured-data"
 import { Metadata } from "next"
 
@@ -24,22 +27,34 @@ const orgLd = organizationSchema()
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }}
       />
-      {/* Hero Section */}
-      <HeroSection variant="home" />
+      <SiteHeader />
 
-      {/* Match Bar */}
-      <MatchBar showLive={true} maxMatches={3} />
+      <main className="flex-1">
+        <HeroSection variant="home" />
+        <MatchBar showLive={true} maxMatches={1} />
+        <FeaturedPlayers count={4} showRatings={true} />
 
-      {/* Featured Players */}
-      <FeaturedPlayers count={6} showRatings={true} />
+        {/* Rankings + News side-by-side */}
+        <section className="py-14 bg-carbon border-t border-carbon-300">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
+              <div className="lg:col-span-3">
+                <TeamRankings />
+              </div>
+              <div className="lg:col-span-2">
+                <RecentNews limit={4} showCategory={true} />
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
 
-      {/* Recent News */}
-      <RecentNews limit={3} showCategory={true} />
-    </div>
-  );
+      <SiteFooter />
+    </>
+  )
 }
