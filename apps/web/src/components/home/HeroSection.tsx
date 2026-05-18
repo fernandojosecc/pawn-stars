@@ -1,109 +1,123 @@
 import React from "react"
-import { Button } from "@/components/ui/button"
-import { Heading } from "@/components/typography/Heading"
-import { Body } from "@/components/typography/Body"
+import Link from "next/link"
 
 interface HeroSectionProps {
   variant?: "home" | "default"
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ variant = "default" }) => {
+const BOARD_POSITION = [
+  ["r", ".", "b", "q", "k", ".", ".", "r"],
+  ["p", "p", ".", "p", ".", "p", "p", "p"],
+  [".", ".", "p", ".", ".", "n", ".", "."],
+  [".", ".", ".", ".", ".", ".", ".", "."],
+  [".", ".", "P", "P", ".", ".", ".", "."],
+  [".", "N", ".", ".", "P", ".", ".", "."],
+  ["P", "P", ".", ".", ".", "P", "P", "P"],
+  ["R", ".", "B", "Q", "K", ".", ".", "R"],
+]
+
+const PIECE_GLYPHS: Record<string, string> = {
+  K: "♔", Q: "♕", R: "♖", B: "♗", N: "♘", P: "♙",
+  k: "♚", q: "♛", r: "♜", b: "♝", n: "♞", p: "♟",
+}
+
+function ChessBoard() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-hidden">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(0,0,0,.1) 35px, rgba(0,0,0,.1) 70px)`,
-        }} />
-      </div>
-      
-      {/* Chess board decoration */}
-      <div className="absolute top-10 right-10 w-32 h-32 sm:w-48 sm:h-48 opacity-10">
-        <div className="grid grid-cols-8 grid-rows-8 w-full h-full">
-          {Array.from({ length: 64 }).map((_, i) => {
-            const row = Math.floor(i / 8)
-            const col = i % 8
-            const isLight = (row + col) % 2 === 0
+    <div className="w-full max-w-sm sm:max-w-md mx-auto aspect-square select-none">
+      <div className="grid grid-cols-8 w-full h-full border border-carbon-300">
+        {BOARD_POSITION.map((row, ri) =>
+          row.map((cell, ci) => {
+            const isLight = (ri + ci) % 2 === 0
+            const piece = PIECE_GLYPHS[cell]
+            const isWhitePiece = cell === cell.toUpperCase() && cell !== "."
             return (
               <div
-                key={i}
-                className={isLight ? "bg-chess-light" : "bg-chess-dark"}
-              />
+                key={`${ri}-${ci}`}
+                className={`flex items-center justify-center aspect-square text-lg sm:text-2xl ${
+                  isLight ? "bg-[#3A3228]" : "bg-[#1A1612]"
+                }`}
+              >
+                {piece && (
+                  <span className={isWhitePiece ? "text-[#E8D8B0]" : "text-[#2A2018]"}>
+                    {piece}
+                  </span>
+                )}
+              </div>
             )
-          })}
-        </div>
-      </div>
-
-      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-        {/* Main headline */}
-        <div className="mb-8 animate-fade-in">
-          <Heading 
-            level="h1" 
-            align="center"
-            className="mb-4"
-          >
-            {variant === "home" ? (
-              <>
-                Welcome to <span className="text-accent-600">Pawn Stars</span>
-                <br />
-                Chess Excellence
-              </>
-            ) : (
-              "Pawn Stars Chess Organization"
-            )}
-          </Heading>
-          
-          <Body 
-            size="lg" 
-            align="center"
-            className="max-w-2xl mx-auto text-primary-600"
-          >
-            Building champions through strategic excellence, dedicated training, 
-            and competitive spirit. Join us on the journey to chess mastery.
-          </Body>
-        </div>
-
-        {/* Call-to-action buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 animate-slide-up">
-          <Button 
-            size="lg" 
-            variant="accent"
-            className="w-full sm:w-auto shadow-trophy"
-          >
-            Join Our Team
-          </Button>
-          <Button 
-            size="lg" 
-            variant="outline"
-            className="w-full sm:w-auto"
-          >
-            View Roster
-          </Button>
-        </div>
-
-        {/* Stats preview */}
-        {variant === "home" && (
-          <div className="grid grid-cols-3 gap-4 sm:gap-8 max-w-lg mx-auto animate-slide-up">
-            <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-accent-600">150+</div>
-              <div className="text-xs sm:text-sm text-primary-600 font-medium">Active Players</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-accent-600">25</div>
-              <div className="text-xs sm:text-sm text-primary-600 font-medium">Tournaments Won</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-accent-600">8</div>
-              <div className="text-xs sm:text-sm text-primary-600 font-medium">Grandmasters</div>
-            </div>
-          </div>
+          })
         )}
       </div>
+    </div>
+  )
+}
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce-slow">
-        <div className="w-6 h-10 border-2 border-primary-300 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-primary-400 rounded-full mt-2 animate-pulse"></div>
+export const HeroSection: React.FC<HeroSectionProps> = ({ variant = "default" }) => {
+  return (
+    <section className="relative bg-carbon overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[520px]">
+          {/* Chess board — left column */}
+          <div className="flex items-center justify-center bg-[#0E0E0C] py-10 lg:py-0 px-8 lg:px-12 border-b lg:border-b-0 lg:border-r border-carbon-300">
+            <ChessBoard />
+          </div>
+
+          {/* Content — right column */}
+          <div className="flex flex-col justify-center px-6 sm:px-10 lg:px-14 py-12 lg:py-16">
+            {/* Season badge */}
+            <div className="mb-6">
+              <span className="inline-block border border-gold px-3 py-1 font-mono text-xs tracking-[0.2em] text-gold">
+                SEASON 2025 – 26
+              </span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="font-display text-6xl sm:text-7xl lg:text-8xl leading-none tracking-wide mb-6">
+              <span className="text-white block">PLAY</span>
+              <span className="text-gold block">SHARP.</span>
+              <span className="text-white block">WIN BIG.</span>
+            </h1>
+
+            {/* Description */}
+            <p className="font-sans text-sm text-carbon-800 leading-relaxed mb-8 max-w-sm">
+              Pawn Stars is a competitive chess organization built around performance, preparation, and elite team culture.
+            </p>
+
+            {/* Stats */}
+            {variant === "home" && (
+              <div className="flex items-center gap-8 mb-8">
+                <div>
+                  <div className="font-display text-3xl text-gold leading-none">2481</div>
+                  <div className="font-mono text-[10px] tracking-widest text-carbon-700 mt-1">TEAM AVG ELO</div>
+                </div>
+                <div className="w-px h-8 bg-carbon-300" />
+                <div>
+                  <div className="font-display text-3xl text-white leading-none">18</div>
+                  <div className="font-mono text-[10px] tracking-widest text-carbon-700 mt-1">ACTIVE PLAYERS</div>
+                </div>
+                <div className="w-px h-8 bg-carbon-300" />
+                <div>
+                  <div className="font-display text-3xl text-white leading-none">7W</div>
+                  <div className="font-mono text-[10px] tracking-widest text-carbon-700 mt-1">WIN STREAK</div>
+                </div>
+              </div>
+            )}
+
+            {/* CTAs */}
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/team"
+                className="inline-flex items-center px-5 py-2.5 border border-gold text-gold font-mono text-xs tracking-widest hover:bg-gold hover:text-carbon transition-colors"
+              >
+                VIEW ROSTER
+              </Link>
+              <Link
+                href="/schedule"
+                className="inline-flex items-center px-5 py-2.5 border border-carbon-400 text-carbon-900 font-mono text-xs tracking-widest hover:border-white hover:text-white transition-colors"
+              >
+                SEE SCHEDULE
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
